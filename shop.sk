@@ -1,0 +1,455 @@
+# Uses github.com/ACSkripts/com.gmail.antcoreservices/utility/messages.sk for messages!
+# Uses github.com/ACSkripts/com.gmail.antcoreservices/economy/economy-manager.sk for economy!
+# Uses github.com/ACSkripts/com.gmail.antcoreservices/utility/menu.sk for menus!
+# This is owned by Antritus, github.com/Antritus
+# Usage of this skript required you to give credit!
+on load:
+	set {_c} to true
+	while {_c} is true:
+		set {_script} to script
+		set {_loaded::message} to false
+		set {_loaded::menu} to false
+		 # Waiting for menu.sk to load
+		if {utility::messages::manager_loaded} is true:
+			set {gui::shop::shop_manager} to true
+			delete {gui::shop::*}
+			# Register messages 
+
+			# Sell item sellItem(player, id, amount)
+			registerMessage("shop::error::sell::not-set::player", "[ACSkripts] &cError - player not set - %{_script}%")
+			# not used
+		#	registerMessage("shop::error::sell::not-set::amountProduct::console", "[ACSkripts] &cError - amount not set | {id} | - %{_script}%")
+			# This should be used only as a warn!
+			registerMessage("shop::error::sell::not-set::amountItem::console", "[ACSkripts] &cError - amount not set - %{_script}%")
+			registerMessage("shop::error::sell::not-set::price::console", "[ACSkripts] &cError - price not set | {item} |  - %{_script}%")
+			# This should not be used due to starting to spam console!
+		#	registerMessage("shop::error::sell::not-set::id::console", "[ACSkripts] &cError - id is not known | {id} |  - %{_script}%")
+			registerMessage("shop::error::sell::not-set::product::console", "[ACSkripts] &cError - product is not set | {id} |  - %{_script}%")
+			registerMessage("shop::error::sell::not-set::amountItem::player", "&cThere was an error selling &f{item}! Contact staff to repair this item.%nl%&cContact staff with code shop.sell.amount-not-set.item({id})")
+			registerMessage("shop::error::sell::not-set::price::player", "&cThere was an error selling &f{item}&c! There is not price for it!")
+			registerMessage("shop::error::sell::not-set::id::player", "&cYou cannot sell this item!")
+			registerMessage("shop::error::sell::not-set::product::player", "&cYou cannot sell this item!")
+			registerMessage("shop::error::sell::not-set::nbt-required-but-not-set", "&cYou cannot sell this!")
+			registerMessage("shop::error::sell::not-set::product-nbt::id-not-match::player", "&cThere was an error selling &f{item}&c! Contact staff to repair your item.%nl%&cContact staff with code: shop.sell.nbt-not-match(r: {id}, f:{nbt})")
+			registerMessage("shop::error::sell::not-set::product-nbt::id-not-match::console", "[ACSkripts] &cError - nbt does not match (id) | required: {id} nbtFound: {nbt} - %{_script}%")
+			registerMessage("shop::error::sell::not-set::product-nbt::price-not-match::player", "&cThere was an error selling &f{item}&c! Contact staff to repair your item.%nl%&cContact staff with code: shop.sell.nbt-not-match(id: {id}, r:{price}, f:{nbt})")
+			registerMessage("shop::error::sell::not-set::product-nbt::price-not-match::console", "[ACSkripts] &cError - nbt does not match (price) | id: {id} idPrice: {price} nbtPrice{nbt}")
+			registerMessage("shop::error::sell::does-not-have-item", "&cYou do not have enough of this item!")
+			registerMessage("shop::error::sell::price-less-than-0", "&cYou cannot sell this item!")
+			registerMessage("shop::info::sell::player-sell-item", "&7You sold &f{amount} &7of &f{item} &7 for &7${price}&7!")
+
+			set {_loaded::message} to true
+
+			# Used to debug the shop buy pages!  - Antritus
+			add "debug-menu" to {_productMenus::*}
+			registerMenu("shop::debug-menu", "Debug", gray stained glass pane named "&c" with all flags hidden, 6)
+#			registerMenuSlot("shop::debug-menu", -0, "shop::debug-menu::debug_0", registerShopProduct("debug_0", iron ingot, true, "&f&lDebug 0", "", 0, 0), "open-menu", "shop::debug-menu::debug_0-menu")
+			registerMenuSlot("shop::debug-menu", 0, "shop::debug-menu::debug_0", registerShopProduct("debug_0", iron ingot, true, "&f&lDebug 0", "", 0, 0), "open-menu", "shop::debug-menu::debug_0-menu")
+			registerMenuSlot("shop::debug-menu", 1, "shop::debug-menu::debug_1", registerShopProduct("debug_1", copper ingot, true, "&f&lDebug 1", "", 1, 0), "open-menu", "shop::debug-menu::debug_1-menu")
+			registerMenuSlot("shop::debug-menu", 2, "shop::debug-menu::debug_2", registerShopProduct("debug_2", gold ingot, true, "&f&lDebug 2", "", 1, 1), "open-menu", "shop::debug-menu::debug_2-menu")
+			registerMenuSlot("shop::debug-menu", 3, "shop::debug-menu::debug_3", registerShopProduct("debug_3", netherite ingot, true, "&f&lDebug 3", "", 1, 0), "open-menu", "shop::debug-menu::debug_3-menu")
+
+			# Registering shop main menu
+			registerMenu("shop::main-menu", "Shop", gray stained glass pane named "&c" with all flags hidden, 3)
+			registerMenuSlot("shop::main-menu", 10, "shop::main-menu::blocks-menu", grass block named "&aBlocks" with all flags hidden, "open-menu", "shop::blocks-menu")
+			registerMenuSlot("shop::main-menu", 13, "shop::main-menu::coming_soon", barrier named "&cComing soon..." with all flags hidden)
+			registerMenuSlot("shop::main-menu", 16, "shop::main-menu::coming_soon", barrier named "&cComing soon..." with all flags hidden)
+
+
+
+			# Registering new shop page
+			registerMenu("shop::blocks-menu", "Shop > Blocks", gray stained glass pane named "&c" with all flags hidden, 6)
+			add "blocks-menu" to {_productMenus::*}
+
+
+			registerMenuSlot("shop::blocks-menu", 0, "shop::blocks-menu::oak_wood", registerShopProduct("oak_wood", oak wood block, false, "&fOak Wood", "Item has lore%nl%True", -1, 0.5), "open-menu", "shop::blocks-menu::oak_wood-menu")
+			registerMenuSlot("shop::blocks-menu", 1, "shop::blocks-menu::compressed_oak_wood", registerShopProduct("compressed_oak_wood", oak wood block, true, "<##613008>&lCompressed Wood", "", -1, 0.5*20), "open-menu", "shop::blocks-menu::compressed_oak_wood-menu")
+			registerMenuSlot("shop::blocks-menu", 2, "shop::blocks-menu::cobblestone", registerShopProduct("cobblestone", cobblestone block, false, "&fCobblestone", "", -1, 1), "open-menu", "shop::blocks-menu::cobblestone-menu")
+			registerMenuSlot("shop::blocks-menu", 3, "shop::blocks-menu::compressed_cobblestone", registerShopProduct("compressed_cobblestone", cobblestone block, true, "&7&lCompressed Cobblestone", "", -1, 1*24), "open-menu", "shop::blocks-menu::compressed_cobblestone-menu")
+			registerMenuSlot("shop::blocks-menu", 4, "shop::blocks-menu::raw_iron", registerShopProduct("raw_iron", raw iron, false, "&fRaw Iron", "", -1, 1.5), "open-menu", "shop::blocks-menu::raw_iron-menu")
+			registerMenuSlot("shop::blocks-menu", 5, "shop::blocks-menu::compressed_iron", registerShopProduct("compressed_iron", iron ingot, true, "&f&lCompressed Iron", "", -1, 1.5*20), "open-menu", "shop::blocks-menu::compressed_iron-menu")
+			registerMenuSlot("shop::blocks-menu", 6, "shop::blocks-menu::raw_gold", registerShopProduct("raw_gold", raw gold, false, "&fRaw Gold", "", -1, 2), "open-menu", "shop::blocks-menu::raw_gold-menu")
+			registerMenuSlot("shop::blocks-menu", 7, "shop::blocks-menu::compressed_gold", registerShopProduct("compressed_gold", gold ingot, true, "&6&lCompressed Gold", "", -1, 2*24), "open-menu", "shop::blocks-menu::compressed_gold-menu")
+			registerMenuSlot("shop::blocks-menu", 8, "shop::blocks-menu::redstone", registerShopProduct("redstone", redstone, false, "&fRedstone", "", -1, 2.5/9), "open-menu", "shop::blocks-menu::redstone-menu")
+			registerMenuSlot("shop::blocks-menu", 8, "shop::blocks-menu::block_of_redstone", registerShopProduct("block_of_redstone", redstone block, false, "&fBlock Of Redstone", "", -1, 2.5), "open-menu", "shop::blocks-menu::block_of_redstone-menu")
+			registerMenuSlot("shop::blocks-menu", 9, "shop::blocks-menu::compressed_redstone", registerShopProduct("compressed_redstone", redstone, true, "&4&lCompressed Redstone", "", -1, 2.5*24), "open-menu", "shop::blocks-menu::compressed_redstone-menu")
+			registerMenuSlot("shop::blocks-menu", 10, "shop::blocks-menu::lapis_lazuli", registerShopProduct("lapis_lazuli", lapis lazuli, false, "&fLapis Lazuli", "", -1, 3/9), "open-menu", "shop::blocks-menu::lapis_lazuli-menu")
+			registerMenuSlot("shop::blocks-menu", 11, "shop::blocks-menu::block_of_lapis", registerShopProduct("block_of_lapis", lapis lazuli block, false, "&fBlock Of Lapis Lazuli", "", -1, 3), "open-menu", "shop::blocks-menu::block_of_lapis-menu")
+			registerMenuSlot("shop::blocks-menu", 12, "shop::blocks-menu::compressed_lapis", registerShopProduct("compressed_lapis", lapis lazuli, true, "&4&lCompressed Lapis", "", -1, 3*24), "open-menu", "shop::blocks-menu::compressed_lapis-menu")
+			registerMenuSlot("shop::blocks-menu", 13, "shop::blocks-menu::emerald", registerShopProduct("emerald", emerald, false, "&fEmerald", "", -1, 4), "open-menu", "shop::blocks-menu::emerald-menu")
+			registerMenuSlot("shop::blocks-menu", 14, "shop::blocks-menu::compressed_emerald", registerShopProduct("compressed_emerald", emerald, true, "&a&lCompressed Emerald", "", -1, 4*24), "open-menu", "shop::blocks-menu::compressed_emerald-menu")
+			registerMenuSlot("shop::blocks-menu", 15, "shop::blocks-menu::diamond", registerShopProduct("diamond", diamond, false, "&fEmerald", "", -1, 4), "open-menu", "shop::blocks-menu::emerald-menu")
+			registerMenuSlot("shop::blocks-menu", 16, "shop::blocks-menu::compressed_diamond", registerShopProduct("compressed_diamond", diamond, true, "&a&lCompressed Emerald", "", -1, 4*24), "open-menu", "shop::blocks-menu::compressed_emerald-menu")
+			# Creating new menus for all items. (Blocks menu)
+			# Looping menus
+			loop {_productMenus::*}:
+				#broadcast "&7Loading %loop-value%&7..."
+				# looping slots of menus
+				loop ({gui::shop::%loop-value%::slots::*}):
+					# checking if 
+					if ({gui::shop::%loop-value-1%::slot::%loop-value-2%::function} is "open-menu"):
+						set {_v} to "gui::shop::%loop-value-1%::slot::%loop-value-2%"
+						set {_id::*} to {gui::shop::%loop-value-1%::slot::%loop-value-2%::id} split by "::"
+						set {_id} to {_id::%size of {_id::*}%}
+						broadcast {_id}
+						set {_a} to {%{_v}%::id}
+						replace "shop::" with "" in {_v2}
+						set {_v2} to "%{_v2}%-menu"
+						replace "shop::%loop-value-1%::" with "" in {_a}
+						replace "-menu" with "" in {_a}
+						#broadcast {%{_v}%::functionID}
+						if ({gui::shop::%loop-value-1%::slot::%loop-value-2%::function} = "open-menu"):
+							#broadcast "&7Loading &7%loop-value-1% &7sub-menu: %{%{_v}%::functionID}%&7..."
+							registerMenu({%{_v}%::functionID}, "S... > Blocks > %betterLookingNames({_a})%", gray stained glass pane named "&c" with all flags hidden, 5)
+							registerMenuSlot({%{_v}%::functionID}, 40, "%{_v}%::back::1", (barrier of lure 1 named "&cBack" with all flags hidden), "open-menu", "shop::%loop-value-1%")
+						set {_a::*} to "sell", "buy"
+						set {_b::*} to "sold", "bought"
+						set {_c::*} to 10, 19
+						set {_d::*} to red stained glass pane, lime stained glass pane
+						loop size of {_a::*} times:
+							set {_firstSlot} to {_c::%loop-value-3%}
+							if {gui::shop::product::%{_a}%::price_%{_a::%loop-value-3%}%} > -0:
+								set {_v3} to {_a}
+								registerMenuSlot({%{_v}%::functionID}, {_firstSlot}, "%{_v}%::%{_a::%loop-value-3%}%::1", betterLookingSellButtons({_d::%loop-value-3%}, "%{_a::%loop-value-3%}%", "&c", "&f%betterLookingNames({_a})%", 1, {gui::shop::product::%{_id}%::price_%{_a::%loop-value-3%}%}*1), "%{_a::%loop-value-3%}%-item", "%{_v3}% {|} 1")
+		#						registerMenuSlot({%{_v}%::openMenu}, ({_firstSlot}), "%{_v}%::%{_a::%loop-value-3%}%::%{_d}%", betterLookingSellButtons({_d::%loop-value-3%}, "%{_a::%loop-value-3%}%", "&c", "&f%betterLookingNames({_a})%", {_b}, {gui::shop::products::%{_a}%::price_%{_a::%loop-value-3%}%}*{_b}), "%{_a::%loop-value-3%}%-item", "%{_v3}%")
+								set {_b} to 16
+								set {_d} to 2
+								loop 6 times:
+									add 1 to {_firstSlot}
+									registerMenuSlot({%{_v}%::functionID}, ({_firstSlot}), "%{_v}%::%{_a::%loop-value-3%}%::%{_d}%", betterLookingSellButtons({_d::%loop-value-3%}, "%{_a::%loop-value-3%}%", "&c", "&f%betterLookingNames({_a})%", {_b}, {gui::shop::product::%{_id}%::price_%{_a::%loop-value-3%}%}*{_b}), "%{_a::%loop-value-3%}%-item", "%{_v3}% {|} %{_b}%")
+		#							registerMenuSlot({%{_v}%::openMenu}, ({_firstSlot}), "%{_v}%::%{_a::%loop-value-3%}%::%{_d}%", betterLookingSellButtons({_d::%loop-value-3%}, "%{_a::%loop-value-3%}%", "&c", "&f%betterLookingNames({_a})%", {_b}, {gui::shop::products::%{_a}%::price_%{_a::%loop-value-3%}%}*{_b}), "%{_a::%loop-value-3%}%-item", "%{_v3}%")
+									if ({_b} > 64):
+										add 64 to {_b}
+									else:
+										add {_b} to {_b}
+							else:
+								set {_s} to {_firstSlot}
+								loop 7 times:
+									registerMenuSlot({%{_v}%::functionID}, {_s}, "%{_v}%:%{_a::%loop-value-3%}%:%{_v}%", barrier named "&cThis item cannot be %{_b::%loop-value-3%}%!")#, "shop::%loop-value%::%{_a}%")
+									add 1 to {_s}
+					#broadcast "&7Loaded &7%loop-value-1% &7sub-menu: %{%{_v}%::functionID}%&7!"
+				#broadcast "&7Loaded &7%loop-value-1%&7!"
+			broadcast "&cLoaded shops!"
+			set {_c} to false
+			stop
+		add 1 to {_tries}
+		if {_tries} = 100:
+			broadcast "&cCould not load shops!"
+			stop
+		add 1 to {_tries}
+		wait 5 seconds
+function products():
+	loop {gui::shop::products::*}:
+		broadcast loop-value
+		broadcast "%{gui::shop::product::%loop-value%::price_sell}%"
+function registerMenu(menuname: string, guiname: string,  background: itemtype, size: integer = 3):
+	delete {gui::%{_menuname}%::*}
+	set {gui::%{_menuname}%::backround} to {_background}
+	set {gui::%{_menuname}%::guiname} to {_guiname}
+	set {gui::%{_menuname}%::size} to {_size}
+function registerMenuSlot(menuname: string, slot: integer, id: string, item: itemtype, function: string = "", functionID: string = "", functionPermission: string = ""):
+	set {gui::%{_menuname}%::slot::%{_slot}%::item} to {_item}
+	set {gui::%{_menuname}%::slot::%{_slot}%::id} to {_id}
+	set {gui::%{_menuname}%::slot::%{_slot}%::function} to {_function}
+	set {gui::%{_menuname}%::slot::%{_slot}%::functionID} to {_functionID}
+	set {gui::%{_menuname}%::slot::%{_slot}%::functionPermission} to {_functionPermission}
+	add "%{_slot}%" to {gui::%{_menuname}%::slots::*}
+function openMenu(menuname: string, p: player):
+	set {_u} to uuid of {_p}
+	set metadata tag {_menuname} of {_p} to chest inventory with {gui::%{_menuname}%::size} rows named {gui::%{_menuname}%::guiname}
+#	set {gui::players::%{_u}%::menuname} to {_menuname}
+	loop (9*{gui::%{_menuname}%::size})+1 times:
+#		broadcast "backround %{gui::%{_menuname}%::backround}%"
+#		broadcast "%loop-value%"
+		set slot loop-value-1 -1 of metadata tag {_menuname} of {_p} to {gui::%{_menuname}%::backround}
+	set {_c} to 0
+	loop {gui::%{_menuname}%::slots::*}:
+		set slot loop-value parsed as integer of metadata tag {_menuname} of {_p} to {gui::%{_menuname}%::slot::%loop-value%::item}
+		add 1 to {_c}
+	set {gui::players::%{_u}%::inventory} to metadata tag {_menuname} of {_p}
+	set {gui::players::%{_u}%::gui} to {_menuname}
+	open (metadata tag {_menuname} of {_p}) to {_p}
+
+function sellItem(p: player, id: string, amount: integer, permission: string, requireNBTID: boolean, skipNBTTags: boolean):
+	broadcast "%{_amount}%"
+	if {_p} is not set:
+		send getMessage("shop::error::sell::not-set::player") to console
+	else if {_amount} is not set:
+		send getMessage("shop::error::sell::not-set::amountItem::console") to console
+		send getMessage("shop::error::sell::not-set::amountItem::player") to {_p}
+		stop
+	else if {gui::shop::products::*} does not contain {_id}:
+		# Do not use this to reduce spam in console!
+#		send getMessage("shop::error::sell::not-set::id::console") to console
+		send getMessage("shop::error::sell::not-set::id::player") to {_p}
+		stop
+	else if {gui::shop::product::%{_id}%::product} is not set:
+		send formatMessage("shop::error::sell::not-set::product::console", ("{id} {|} %{_id}%")) to console
+		send getMessage("shop::error::sell::not-set::product::player") to {_p}
+		stop
+	else if {gui::shop::product::%{_id}%::price_sell} is not set:
+		send formatMessage("shop::error::sell::not-set::price::console", ("{id} {|} %{_id}%", "{item} {|} %{gui::shop::product::%{_id}%::product}%")) to console
+		send formatMessage("shop::error::sell::not-set::price::player", ("{id} {|} %{_id}%", "{item} {|} %{gui::shop::product::%{_id}%::product}%")) to {_p}
+		stop
+	else if {_p} does not have {_amount} of {gui::shop::product::%{_id}%::product}:
+		send getMessage("shop::error::sell::does-not-have-item") to {_p}
+		stop
+	else if {gui::shop::product::%{_id}%::price} < 0:
+		send getMessage("shop::error::sell::price-less-than-0::player") to {_p}
+		stop
+	else:
+		set {_nbtcomp} to nbt compound of {gui::shop::product::%{_id}%::product}
+		set {_productID} to tag "tag;shop_item_id" of {_nbtcomp}
+		set {_productSellPrice} to tag "tag;shop_price_sell" of {_nbtcomp}
+		set {_req} to {_amount}
+		loop {_p}'s inventory: #'
+			if {_req} < 0:
+				stop loop
+			set {_item} to {_id}
+			replace "_" with " " in {_item}
+			if "%loop-value%" contains {_item}: # is {gui::shop::product::%{_id}%::product}:
+				broadcast "FIRST"
+				set {_nbt} to nbt compound of loop-value
+				set {_tag} to tag "tag;shop_item_id" of {_nbt}
+				broadcast "%{_tag}% | %{_id}%"
+				if "%{_tag}%" != "%{_id}%":
+					if tag "tag;shop_item_id" of {_nbt} is set:
+						continue
+					else:
+						if {_requireNBTID} is true:
+							continue
+				if {_tag} is set:
+					if {_skipNBTTags} is true:
+						continue
+				broadcast "PASS"
+				set {_a} to item amount of loop-value-1
+				add loop-value to {_items::*}
+				remove {_a} from {_req}
+				if {_req} <= 0:
+					remove {_amount} of loop-value from {_p}
+#					remove {_amount} of {gui::shop::product::%{_id}%::product} from {_p}
+					economyBalanceAdd({_p}, {_amount}*{gui::shop::product::%{_id}%::price_sell}, "Sell items")
+					send formatMessage("shop::info::sell::player-sell-item", ("{amount} {|} %{_amount}%", "{item} {|} %{gui::shop::product::%{_id}%::product}%", "{price} {|} %{gui::shop::product::%{_id}%::price_sell}*{_amount}%")) to {_p}
+					stop
+			else:
+				broadcast "SECOND"
+				set {_nbt} to nbt compound of loop-value
+				set {_tag} to tag "tag;shop_item_id" of {_nbt}
+				broadcast "%{_tag}% | %{_id}%"
+				if "%{_tag}%" != "%{_id}%":
+					if tag "tag;shop_item_id" of {_nbt} is set:
+						continue
+					else:
+						if {_requireNBTID} is true:
+							continue
+				if {_skipNBTTags} is true:
+					if {_tag} is set:
+						continue
+				broadcast "PASS"
+				set {_a} to item amount of loop-value-1
+				add loop-value to {_items::*}
+				remove {_a} from {_req}
+				if {_req} <= 0:
+					remove {_amount} of loop-value from {_p}
+#					remove {_amount} of {gui::shop::product::%{_id}%::product} from {_p}
+					economyBalanceAdd({_p}, {_amount}*{gui::shop::product::%{_id}%::price_sell}, "Sell items")
+					send formatMessage("shop::info::sell::player-sell-item", ("{amount} {|} %{_amount}%", "{item} {|} %{gui::shop::product::%{_id}%::product}%", "{price} {|} %{gui::shop::product::%{_id}%::price_sell}*{_amount}%")) to {_p}
+					stop
+		set {_req} to {_amount}
+		broadcast "REQUIRED: %{_req}%"
+		if {_req} > 0:
+			loop {_p}'s inventory:
+				set {_item} to {_id}
+				replace "_" with " " in {_item}
+				if "%loop-value%" contains {_item}:
+					set {_nbt} to nbt compound of loop-value
+					set {_tag} to tag "tag;shop_item_id" of {_nbt}
+					broadcast "%{_tag}% | %{_id}%"
+					if "%{_tag}%" != "%{_id}%":
+						if tag "tag;shop_item_id" of {_nbt} is set:
+							continue
+						else:
+							if {_requireNBTID} is true:
+								continue
+					if {_skipNBTTags} is true:
+						if {_tag} is set:
+							continue
+					remove item amount of loop-value-1 from {_a}
+					if {_a} <= 0:
+						remove {_amount} of loop-value from {_p}'s inventory
+						economyBalanceAdd({_p}, {_amount}*{gui::shop::product::%{_id}%::price_sell}, "Sell items")
+						send formatMessage("shop::info::sell::player-sell-item", ("{amount} {|} %{_amount}%", "{item} {|} %{gui::shop::product::%{_id}%::product}%", "{price} {|} %{gui::shop::product::%{_id}%::price_sell}*{_amount}%")) to {_p}
+						stop loop
+				else:
+					set {_nbt} to nbt compound of loop-value
+					set {_tag} to tag "tag;shop_item_id" of {_nbt}
+					broadcast "%{_tag}% | %{_id}%"
+					if "%{_tag}%" != "%{_id}%":
+						if tag "tag;shop_item_id" of {_nbt} is set:
+							continue
+						else:
+							if {_requireNBTID} is true:
+								continue
+					if {_skipNBTTags} is true:
+						if {_tag} is set:
+							continue
+					remove item amount of loop-value-1 from {_a}
+					if {_a} <= 0:
+						remove {_amount} of loop-value from {_p}'s inventory
+						economyBalanceAdd({_p}, {_amount}*{gui::shop::product::%{_id}%::price_sell}, "Sell items")
+						send formatMessage("shop::info::sell::player-sell-item", ("{amount} {|} %{_amount}%", "{item} {|} %{gui::shop::product::%{_id}%::product}%", "{price} {|} %{gui::shop::product::%{_id}%::price_sell}*{_amount}%")) to {_p}
+						stop loop
+		broadcast "REQUIRED: %{_req}%"
+		broadcast "No sell"
+#			if {_requireNBTID} is true:
+#
+#			if {_id} is not {_productID}:
+#				send formatMessage("shop::error::sell::not-set::product-nbt-id-not-match::player", ("{id} {|} %{_id}%", "{nbt} {|} %{_nbtID}%")) to {_p}
+#				send formatMessage("shop::error::sell::not-set::product-nbt-id-not-match::console", ("{id} {|} %{_id}%", "{nbt} {|} %{_nbtID}%")) to console
+#				stop
+#		if {_requireNBTID} is true:
+#			if {_id} is not {_productID}:
+#				send formatMessage("shop::error::sell::not-set::product-nbt-id-not-match::player", ("{id} {|} %{_id}%", "{nbt} {|} %{_nbtID}%")) to {_p}
+#				send formatMessage("shop::error::sell::not-set::product-nbt-id-not-match::console", ("{id} {|} %{_id}%", "{nbt} {|} %{_nbtID}%")) to console
+#				stop
+#		if {gui::shop::product::%{_id}%::price_sell} is not {_productSellPrice}:
+#			send formatMessage("shop::error::sell::not-set::product-nbt::price-not-match::player", ("{id} {|} %{_id}%", "{nbt} {|} %{_nbtSellPrice}%", "{price} {|} %{gui::shop::product::%{_id}%::price_sell}%", "{item} {|} %{gui::shop::product::%{_id}%::product}%")) to {_p}
+#			send formatMessage("shop::error::sell::not-set::product-nbt::price-not-match::console", ("{id} {|} %{_id}%", "{nbt} {|} %{_nbtSellPrice}%", "{price} {|} %{gui::shop::product::%{_id}%::price_sell}%", "{item} {|} %{gui::shop::product::%{_id}%::product}%")) to console
+#			send formatMessage("shop::error::sell::not-set::price::player", ("{id} {|} %{_id}%", "{item} {|} %{gui::shop::product::%{_id}%::product}%")) to {_p}
+#			stop
+#		else:
+#			remove {_amount} of {gui::shop::product::%{_id}%::product} from {_p}
+#			economyBalanceAdd({_p}, {_amount}*{gui::shop::product::%{_id}%::price_sell}, "Sell items")
+#			send formatMessage("shop::info::sell::player-sell-item", ("{amount} {|} %{_amount}%", "{item} {|} %{gui::shop::product::%{_id}%::product}%", "{price} {|} %{gui::shop::product::%{_id}%::price_sell}*{_amount}%")) to {_p}
+#			stop
+#		remove {_amount} of {gui::shop::product::%{_id}%::product} from {_p}
+#		economyBalanceAdd({_p}, {_amount}*{gui::shop::product::%{_id}%::price_sell}, "Sell items")
+#		send formatMessage("shop::info::sell::player-sell-item", ("{amount} {|} %{_amount}%", "{item} {|} %{gui::shop::product::%{_id}%::product}%", "{price} {|} %{gui::shop::product::%{_id}%::price_sell}*{_amount}%")) to {_p}
+function betterLookingNames(s: string) :: text:
+	replace "_" with " " in {_s}
+	replace "compressed" with "comp." in {_s}
+	return strict proper case {_s}
+function betterLookingSellButtons(item: itemtype, type: string, colorOfType: string, name: string, amount: integer, price: number) :: itemtype:
+	set {_item}'s name to {_name}
+	add "&7&m                                    " to lore of {_item}
+#	add "&7Click to %{_colorOfType}%%lowercase {_type}% &f%{_amount}% &7of &f%{_name}%" to lore of {_item}
+	add "&7%strict proper case {_type}% &f%{_name}% &7for &f$%{_price}% &7(%{_colorOfType}%x%{_amount}%&7)" to lore of {_item}
+	add "&7&m                                    " to lore of {_item}
+	return {_item}
+function registerShopProduct(id: string, item: itemtype, glowing: boolean, name: string, lore: strings, price_buy: number, price_sell: number) :: itemtype:
+	set {_product} to {_item}
+	delete lore of {_item}
+	set {_item}'s name to  "&f%{_name}%"
+	if {_lore::*} is not "" :
+		add {_lore::*} to lore of {_item}
+#	add "&7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m &7&m  &7&m &7&m &7&m " to lore of {_item}
+#	set {_c} to true 
+	add "&7&m                                    " to lore of {_item}
+	if {_price_sell} < 0:
+		add "&cThis item cannot be sold. ( english gud )" to lore of {_item}
+	else:
+		add "&cSell: &f%{_price_sell}% &7(&cx1&7), &f%{_price_sell}*64% &7(&cx64&7)" to lore of {_item}
+	if {_price_buy} < 0:
+		add "&cThis item cannot be bought. ( english gud )" to lore of {_item}
+	else:
+		add "&aBuy: &f%{_price_buy}% &7(&ax1&7), &f%{_price_buy}*64% &7(&ax64&7)" to lore of {_item}
+	add "" to lore of {_item}
+	add "&7Click to open &csell&7/&abuy&7 menu." to lore of {_item}
+	add "&7&m                                    " to lore of {_item}
+	if ({_glowing} = true):	
+		enchant {_item} with lure 1
+	set {_item} to {_item} with all flags hidden
+	set {_nbtcomp} to nbt compound of {_item}
+	set tag "tag;shop_item_id" of {_nbtcomp} to {_id}
+	set tag "tag;shop_price_sell" of {_nbtcomp} to {_price_sell}
+	set tag "tag;shop_price_buy" of {_nbtcomp} to {_price_buy}
+
+
+	set {_check} to tag "tag;shop_item_id" of {_nbtcomp}
+	broadcast "&bshop_item: %{_check}%"
+	set {_check} to tag "tag;shop_price_sell" of {_nbtcomp}
+	broadcast "&cprice_sell: %{_check}%"
+	set {_check} to tag "tag;shop_price_buy" of {_nbtcomp}
+	broadcast "&aprice_buy: %{_check}%"
+	
+	set {_item} to item from nbt {_nbtcomp}
+
+
+	set {gui::shop::product::%{_id}%::price_buy} to {_price_buy}
+	set {gui::shop::product::%{_id}%::price_sell} to {_price_sell}
+	set {gui::shop::product::%{_id}%::product} to {_product}
+	set {gui::shop::product::%{_id}%::id} to {_id}
+
+
+	add {_id} to {gui::shop::products::*}
+	return {_item}
+command /addshopnbttags <string> <integer> <integer>:
+	permission: op
+	permission message: You sure you need this?
+	trigger:
+		set {_nbtcomp} to nbt compound of player's tool
+		set tag "tag;shop_item_id" of {_nbtcomp} to arg 1
+		set tag "tag;shop_price_sell" of {_nbtcomp} to arg 2
+		set tag "tag;shop_price_buy" of {_nbtcomp} to arg 3
+		set player's tool to item from nbt {_nbtcomp}
+command /checkshopnbttags:
+	permission: op
+	permission message: You sure you need this?
+	trigger:
+		set {_nbtcomp} to nbt compound of player's tool
+		set {_check} to tag "tag;shop_item_id" of {_nbtcomp}
+		send "&bshop_item: %{_check}%"
+		set {_check} to tag "tag;shop_price_sell" of {_nbtcomp}
+		send "&cprice_sell: %{_check}%"
+		set {_check} to tag "tag;shop_price_buy" of {_nbtcomp}
+		send "&aprice_buy: %{_check}%"
+
+on inventory close:
+	delete {gui::players::%player's uuid%::*}
+on inventory click:
+	clicked inventory isn't player's inventory
+	if inventory is not {gui::players::%player's uuid%::inventory}:
+		stop
+	cancel event
+	set {_menuname} to {gui::players::%player's uuid%::gui}
+	set {_slot} to index of clicked slot
+	set {_function} to {gui::%{_menuname}%::slot::%{_slot}%::function}
+	set {_functionID} to {gui::%{_menuname}%::slot::%{_slot}%::functionID}
+	set {_permission} to {gui::%{_menuname}%::slot::%{_slot}%::permission}
+#	broadcast ""
+#	broadcast {_menuname}
+#	broadcast {_slot}
+#	broadcast {_permission}
+#	broadcast {_function}
+#	broadcast {_functionID}
+#	broadcast ""
+	if {gui::%{_menuname}%::slot::%{_slot}%::permission} is set:
+		if player does not have permission {gui::%{_menuname}%::slot::%{_slot}%::permission}:
+			send "&cNo perms"
+			stop
+	if ({gui::%{_menuname}%::slot::%{_slot}%::function} = "open-menu"):
+		close player's inventory
+		wait 1 tick # Just a good way to tick the player
+		openMenu({gui::%{_menuname}%::slot::%{_slot}%::functionID}, player)
+		stop
+	if ({gui::%{_menuname}%::slot::%{slot}%::function} = "item-sell"):
+		set {_v::*} to {gui::%{_menuname}%::slot::%{slot}%::functionID} split at "{|}"
+		set {_id} to {_v::1}
+		set {_a} to {_v::2} parsed as integer
+		set {_s} to {_v::3} parsed as boolean
+		sellItem(player, {_id}, {_a}, {_permission}, {_a}, {_s})
+command /debug_shop_give_item [<text>]:
+	permission: admin.debug.shop
+	trigger:
+		if {gui::shop::product::%arg-1%::product} is set:
+			send "&cHere!"
+			set {_nbtcomp} to nbt compound of {gui::shop::product::%arg-1%::product}
+			set tag "tag;shop_item_id" of {_nbtcomp} to {gui::shop::product::%arg-1%::id}
+			set tag "tag;shop_price_sell" of {_nbtcomp} to {gui::shop::product::%arg-1%::price_sell}
+			set tag "tag;shop_price_buy" of {_nbtcomp} to {gui::shop::product::%arg-1%::price_buy}
+			give player item from nbt {_nbtcomp}
+		else:
+			send "&cUnknown item!"
+on tab complete:
+	if event-string is "/debug_shop_give_item":
+		set tab completions for position 1 to {gui::shop::products::*}
