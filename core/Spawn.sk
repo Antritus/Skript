@@ -1,0 +1,23 @@
+command /spawn [<string>]:
+    trigger:
+        if {core::players::%player's uuid%::combat::tag} is true:
+            send "&cYou cannot teleport to spawn while in combat!"
+            stop
+        if arg 1 is set:
+            send "&cIncorrect Usage! &c/spawn"
+            stop
+        teleport player to {core::spawn}
+command /setspawn:
+    permission: antcore.setspawn
+    trigger:
+        set {core::spawn} to player's location
+        send "&cSet the spawn to &f%player's location%"
+on respawn:
+    teleport player to {core::spawn}
+on death:
+    wait 1 tick
+    force victim to respawn
+on world change:
+    world of player is not "void"
+    if player is not op:
+        teleport player to {core::spawn}

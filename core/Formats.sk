@@ -1,0 +1,32 @@
+on join:
+    if player has permission "antcore.join.format.admin":
+        set the join message to "&b&lStaff &a&l+ &f%player's prefix%%player%"
+    else if player has permission "antcore.join.format.staff":
+        set the join message to "&b&lStaff &a&l+ &f%player's prefix%%player%"
+    else if player has permission "antcore.join.format.donator":
+        set the join message to "&6&lDonator &a&l+ &f%player's prefix%%player%"
+    else:
+        set the join message to "&a&l+ &f%player's prefix%%player%"
+    if player has not played before:
+        set the join message to "&a&l+ &f%player's prefix%%player% &7joined for the first time!"
+on quit:
+    if player has permission "antcore.quit.format.admin":
+        set the quit message to "&b&lStaff &c&l- &f%player's prefix%%player%"
+    else if player has permission "antcore.quit.format.staff":
+        set the quit message to "&b&lStaff &c&l- &f%player's prefix%%player%"
+    else if player has permission "antcore.quit.format.donator":
+        set the quit message to "&6&lDonator &c&l- &f%player's prefix%%player%"
+    else:
+        set the quit message to "&c&l- &f%player's prefix%%player%"
+#    set the quit message to "&c&l<-> &f%player's prefix%%player%"
+on chat:
+    if player has permission "antcore.chat.format.admin":
+        set {_m} to message
+#        replace "&r" with "%formatted {core::players::%player's uuid%::chatcolor::selected}%" in {_m}
+        set the chat format to "%player's prefix%%player%&7: &f%formatted {core::players::%player's uuid%::chatcolor::selected} ? ""%%formatted {_m}%"
+    else if player has permission "antcore.chat.format.staff":
+        set the chat format to "%Player's prefix%%player%&7: &f%formatted {core::players::%player's uuid%::chatcolor::selected} ? ""%%message%"
+    else if player has permission "antcore.chat.format.donator":
+        set the chat format to "%Player's prefix%%player%&7: &f%formatted {core::players::%player's uuid%::chatcolor::selected} ? ""%%message%"
+    else:
+        set the chat format to "%Player's prefix%%player%&7: &7%formatted {core::players::%player's uuid%::chatcolor::selected} ? ""%%message%"

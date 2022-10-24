@@ -1,0 +1,255 @@
+command /chatcolor [<string>]:
+	permission: antcore.chatcolor.use
+	trigger:
+		if arg 1 is not set:
+			openChatColorMainMenu(player)
+function openChatColorMainMenu(p: player):
+	set metadata tag "guiChatColorMain" of {_p} to chest inventory with 3 rows named "ChatColor"
+	loop 27 times:
+		set slot -1 + loop-value-1 of metadata "guiChatColorMain" of {_p} to dark gray stained glass pane named "&c" with all flags hidden
+	set slot 10 of metadata tag "guiChatColorMain" of {_p} to orange shulker box named "&6&lGradients" with all flags hidden
+	set slot 12 of metadata tag "guiChatColorMain" of {_p} to lime shulker box named "&a&lColors" with all flags hidden
+	set slot 14 of metadata tag "guiChatColorMain" of {_p} to black shulker box named "&a&lModifiers" with all flags hidden
+	set slot 16 of metadata tag "guiChatColorMain" of {_p} to red shulker box named "&c&lRainbow" with all flags hidden
+	set slot 22 of metadata tag "guiChatColorMain" of {_p} to barrier named "&cClose" with all flags hidden
+	open metadata tag "guiChatColorMain" of {_p} to {_p}
+function openChatColorMenu(p: player):
+	set metadata tag "guiChatColor" of {_p} to chest inventory with 4 rows named "ChatColor > Colors &8(%{core::players::%{_p}'s uuid%::chatcolor::selected} ? "&r"%%{core::players::%{_p}'s uuid%::chatcolor::selectedFancy} ? "None"%&8)"
+	loop 36 times:
+		set slot -1 + loop-value-1 of metadata "guiChatColor" of {_p} to dark gray stained glass pane named "&c" with all flags hidden
+	set slot 0 of metadata tag "guiChatColor" of {_p} to red concrete named "&4Dark Red" with lore "&7Click to set your chatcolor to &4DARK RED&7!" with all flags hidden
+	if {_p} does not have permission "antcore.chatcolor.color.dark_red":
+		set slot 0 of metadata tag "guiChatColor" of {_p} to red concrete of protection 1 named "&4Dark Red" with lore "&7You cannot use the chatcolor &4DARK RED&7!" with all flags hidden
+	set slot 1 of metadata tag "guiChatColor" of {_p} to red concrete powder named "&cRed" with lore "&7Click to set your chatcolor to &cRED&7!" with all flags hidden
+	if {_p} does not have permission "antcore.chatcolor.color.red":
+		set slot 1 of metadata tag "guiChatColor" of {_p} to red concrete powder of protection 1 named "&cRed" with lore "&7You cannot use the chatcolor &cRED&7!" with all flags hidden
+
+	set slot 2 of metadata tag "guiChatColor" of {_p} to orange concrete named "&6Orange" with lore "&7Click to set your chatcolor to &6ORANGE&7!" with all flags hidden
+	if {_p} does not have permission "antcore.chatcolor.color.orange":
+		set slot 2 of metadata tag "guiChatColor" of {_p} to orange concrete of protection 1 named "&6Orange" with lore "&7You cannot use the chatcolor &6ORANGE&7!" with all flags hidden
+	set slot 3 of metadata tag "guiChatColor" of {_p} to yellow concrete named "&eYellow" with lore "&7Click to set your chatcolor to &eYELLOW&7!" with all flags hidden
+	if {_p} does not have permission "antcore.chatcolor.color.yellow":
+		set slot 3 of metadata tag "guiChatColor" of {_p} to yellow concrete of protection 1 named "&eYellow" with lore "&7You cannot use the chatcolor &eYELLOW&7!" with all flags hidden
+
+	set slot 4 of metadata tag "guiChatColor" of {_p} to green concrete named "&2Green" with lore "&7Click to set your chatcolor to &2GREEN&7!" with all flags hidden
+	if {_p} does not have permission "antcore.chatcolor.color.green":
+		set slot 4 of metadata tag "guiChatColor" of {_p} to green concrete of protection 1 named "&2Green" with lore "&7You cannot use the chatcolor &2GREEN&7!" with all flags hidden
+	set slot 5 of metadata tag "guiChatColor" of {_p} to lime concrete named "&aLIME" with lore "&7Click to set your chatcolor to &aLIME&7!" with all flags hidden
+	if {_p} does not have permission "antcore.chatcolor.color.lime":
+		set slot 5 of metadata tag "guiChatColor" of {_p} to lime concrete of protection 1 named "&aLIME" with lore "&7You cannot use the chatcolor &aLIME&7!" with all flags hidden
+
+	set slot 6 of metadata tag "guiChatColor" of {_p} to cyan concrete named "&3Dark Aqua" with lore "&7Click to set your chatcolor to &3DARK AQUA&7!" with all flags hidden
+	if {_p} does not have permission "antcore.chatcolor.color.dark_aqua":
+		set slot 6 of metadata tag "guiChatColor" of {_p} to cyan concrete of protection 1 named "&3Dark Aqua" with lore "&7You cannot use the chatcolor &3DARK AQUA&7!" with all flags hidden
+	set slot 7 of metadata tag "guiChatColor" of {_p} to light blue concrete powder named "&bAqua" with lore "&7Click to set your chatcolor to &bAQUA&7!" with all flags hidden
+	if {_p} does not have permission "antcore.chatcolor.color.aqua":
+		set slot 7 of metadata tag "guiChatColor" of {_p} to light blue concrete powder of protection 1 named "&bAQUA" with lore "&7You cannot use the chatcolor &bAQUA&7!" with all flags hidden
+
+	set slot 8 of metadata tag "guiChatColor" of {_p} to blue concrete named "&1Dark Blue" with lore "&7Click to set your chatcolor to &1DARK BLUE&7!" with all flags hidden
+	if {_p} does not have permission "antcore.chatcolor.color.dark_blue":
+		set slot 8 of metadata tag "guiChatColor" of {_p} to light blue concrete of protection 1 named "&aLIME" with lore "&7You cannot use the chatcolor &1DARK BLUE&7!" with all flags hidden
+	set slot 9 of metadata tag "guiChatColor" of {_p} to light blue concrete named "&9Blue" with lore "&7Click to set your chatcolor to &9BLUE&7!" with all flags hidden
+	if {_p} does not have permission "antcore.chatcolor.color.blue":
+		set slot 9 of metadata tag "guiChatColor" of {_p} to light blue concrete of protection 1 named "&9Blue" with lore "&7You cannot use the chatcolor &9BLUE&7!" with all flags hidden
+
+	set slot 10 of metadata tag "guiChatColor" of {_p} to purple concrete named "&5Dark Purple" with lore "&7Click to set your chatcolor to &5DARK PURPLE&7!" with all flags hidden
+	if {_p} does not have permission "antcore.chatcolor.color.dark_purple":
+		set slot 10 of metadata tag "guiChatColor" of {_p} to purple concrete of protection 1 named "&5Dark Purple" with lore "&7You cannot use the chatcolor &5DARK PURPLE&7!" with all flags hidden
+	set slot 11 of metadata tag "guiChatColor" of {_p} to pink concrete named "&dPurple" with lore "&7Click to set your chatcolor to &dPurple&7!" with all flags hidden
+	if {_p} does not have permission "antcore.chatcolor.color.purple":
+		set slot 11 of metadata tag "guiChatColor" of {_p} to pink concrete of protection 1 named "&dPurple" with lore "&7You cannot use the chatcolor &dPURPLE&7!" with all flags hidden
+
+	set slot 12 of metadata tag "guiChatColor" of {_p} to black concrete named "&0Black" with lore "&7Click to set your chatcolor to &0BLACK&7!" with all flags hidden
+	if {_p} does not have permission "antcore.chatcolor.color.black":
+		set slot 12 of metadata tag "guiChatColor" of {_p} to black concrete of protection 1 named "&0BLACK" with lore "&7You cannot use the chatcolor &0BLACK&7!" with all flags hidden
+	set slot 13 of metadata tag "guiChatColor" of {_p} to dark gray concrete named "&8Dark Gray" with lore "&7Click to set your chatcolor to &8Dark Gray&7!" with all flags hidden
+	if {_p} does not have permission "antcore.chatcolor.color.dark_gray":
+		set slot 13 of metadata tag "guiChatColor" of {_p} to dark gray concrete of protection 1 named "&8Dark Gray" with lore "&7You cannot use the chatcolor &8Dark Gray&7!" with all flags hidden
+
+	set slot 14 of metadata tag "guiChatColor" of {_p} to light gray concrete named "&7Gray" with lore "&7Click to set your chatcolor to &7Gray&7!" with all flags hidden
+	if {_p} does not have permission "antcore.chatcolor.color.gray":
+		set slot 14 of metadata tag "guiChatColor" of {_p} to light gray concrete of protection 1 named "&7Gray" with lore "&7You cannot use the chatcolor &7Gray&7!" with all flags hidden
+	set slot 15 of metadata tag "guiChatColor" of {_p} to white concrete named "&fWhite" with lore "&7Click to set your chatcolor to &fWHITE&7!" with all flags hidden
+	if {_p} does not have permission "antcore.chatcolor.color.white":
+		set slot 15 of metadata tag "guiChatColor" of {_p} to white concrete of protection 1 named "&fWhite" with lore "&7You cannot use the chatcolor &fWHITE&7!" with all flags hidden
+
+
+	set slot 30 of metadata tag "guiChatColor" of {_p} to bedrock named "&cReset Color" with all flags hidden
+	set slot 31 of metadata tag "guiChatColor" of {_p} to barrier named "&cClose" with all flags hidden
+	set slot 32 of metadata tag "guiChatColor" of {_p} to bedrock named "&cReset Color" with all flags hidden
+
+	open metadata tag "guiChatColor" of {_p} to {_p}
+function openChatRainbowColorMenu(p: player):
+	if {core::players::%{_p}'s uuid%::chatcolor::rainbow::wraparound} is not set:
+		set {core::players::%{_p}'s uuid%::chatcolor::rainbow::wraparound} to 12
+	if {core::players::%{_p}'s uuid%::chatcolor::rainbow::lightness} is not set:
+		set {core::players::%{_p}'s uuid%::chatcolor::rainbow::lightness} to 0.7
+	if {core::players::%{_p}'s uuid%::chatcolor::rainbow::enabled} is not set:
+		set {core::players::%{_p}'s uuid%::chatcolor::rainbow::enabled} to "F"
+	set metadata tag "guiChatColorRainbow" of {_p} to chest inventory with 5 rows named "ChatColor > Rainbow (E:%{core::players::%{_p}'s uuid%::chatcolor::rainbow::enabled}%,W:%{core::players::%{_p}'s uuid%::chatcolor::rainbow::wraparound}%,L:%{core::players::%{_p}'s uuid%::chatcolor::rainbow::lightness}%)"
+	loop 44 times:
+		set slot -1 + loop-value-1 of metadata "guiChatColorRainbow" of {_p} to dark gray stained glass pane named "&c" with all flags hidden
+	set {_items::*} to black concrete, coal block, netherite block, polished deepslate, gray wool, deepslate, light gray concrete, stone ,light gray wool, white wool, white concrete
+	loop {_items::*}:
+#		broadcast loop-value
+		add "%loop-value% of protection 1" parsed as itemtype to {_itemsNoPerm::*}
+	set {_colors::*} to "&0", "&0", "&8", "&8", "&8", "&7", "&7", "&7", "&7", "&f", "&f", "&f"
+	loop 11 times:
+		set slot loop-value -1 of metadata tag "guiChatColorRainbow" of {_p} to {_items::%loop-value%} named "%{_colors::%loop-value%}%Lightness: &f%(loop-value -1) /10%" with lore "&7Click to set rainbow lightness to %{_colors::%loop-value%}%%(loop-value -1) /10%&7!" with all flags hidden
+		if {_p} does not have permission "antcore.chatcolor.rainbow.lightness.0":
+			set slot loop-value -1 of metadata tag "guiChatColorRainbow" of {_p} to {_itemsNoPerm::%loop-value%} named "%{_colors::%loop-value%}%Lightness: &f%(loop-value -1) /10%" with lore "&7You cannot use rainbow lightness %{_colors::%loop-value%}%%(loop-value -1) /10%&7!" with all flags hidden
+# This crashes the server when reloading!!!
+#	set {_itemsNoPerm::*} to red concrete of protection 1, red concrete powder of protection 1, orange concrete of protection 1, yellow concrete of protection 1, green concrete of protection 1, lime concrete of protection 1, cyan concrete of protection 1, light blue concrete powder of protection 1, pink concrete of protection 1, purple concrete of protection 1
+	set {_items::*} to red concrete, red concrete powder, orange concrete, yellow concrete, green concrete, lime concrete, cyan concrete, light blue concrete powder, blue concrete, pink concrete, purple concrete
+	delete {_itemsNoPerm::*}
+	loop {_items::*}:
+#		broadcast loop-value
+		add "%loop-value% of protection 1" parsed as itemtype to {_itemsNoPerm::*}
+	set {_colors::*} to "&4", "&c", "&6", "&e", "&2", "&a", "&3", "&b", "&9", "&1", "&d", "&5"
+	set {_warpAmount::*} to 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22
+	set {_slot} to 18
+	loop 11 times:
+		set slot {_slot} + loop-value -1 of metadata tag "guiChatColorRainbow" of {_p} to {_items::%loop-value%} named "%{_colors::%loop-value%}%Wrap Amount: &f%{_warpAmount::%loop-value%}%" with lore "&7Click to set rainbow wrap amount to %{_colors::%loop-value%}%%{_warpAmount::%loop-value%}%&7!" with all flags hidden
+		if {_p} does not have permission "antcore.chatcolor.rainbow.wraparound.0":
+			set slot {_slot} + loop-value -1 of metadata tag "guiChatColorRainbow" of {_p} to {_itemsNoPerm::%loop-value%} named "%{_colors::%loop-value%}%Wrap Amount: &f%{_warpAmount::%loop-value%}%"  with lore "&7You cannot use rainbow wrap amount of %{_colors::%loop-value%}%%{_warpAmount::%loop-value%}%&7!" with all flags hidden
+	set slot 38 of metadata tag "guiChatColorRainbow" of {_p} to bedrock named "&cReset Color" with all flags hidden
+	set slot 42 of metadata tag "guiChatColorRainbow" of {_p} to bedrock named "&cReset Color" with all flags hidden
+	if {core::players::%{_p}'s uuid%::chatcolor::rainbow::enabled} is "T":
+		set slot 39 of metadata tag "guiChatColorRainbow" of {_p} to red wool named "&cDisable" with all flags hidden
+		set slot 41 of metadata tag "guiChatColorRainbow" of {_p} to red wool named "&cDisable" with all flags hidden
+	else:
+		set slot 39 of metadata tag "guiChatColorRainbow" of {_p} to lime wool named "&aEnable" with all flags hidden
+		set slot 41 of metadata tag "guiChatColorRainbow" of {_p} to lime wool named "&aEnable" with all flags hidden
+	set slot 40 of metadata tag "guiChatColorRainbow" of {_p} to barrier named "&cClose" with all flags hidden
+
+	open metadata tag "guiChatColorRainbow" of {_p} to {_p}
+on inventory click:
+	broadcast index of clicked slot
+	if event-inventory is metadata tag "guiChatColorMain" of player:
+		cancel event
+		if index of clicked slot is 10:
+			send "&cGradients!"
+		if index of clicked slot is 12:
+			openChatColorMenu(player)
+			send "&cColors!"
+		if index of clicked slot is 14:
+			send "&cModifiers!"
+		if index of clicked slot is 16:
+			openChatRainbowColorMenu(player)
+		if index of clicked slot is 22:
+			close player's inventory
+	if event-inventory is metadata tag "guiChatColor" of player:
+		cancel event
+		if slot index of clicked slot of event-inventory contains enchantments:
+			send "&cYou cannot use this color!"
+			stop
+		if slot index of clicked slot of event-inventory is dark gray stained glass pane:
+			stop
+		if clicked slot is 30 or 32:
+			set {core::players::%player's uuid%::chatcolor::selected} to ""
+			set {core::players::%player's uuid%::chatcolor::selectedFancy} to "NONE"
+			send "&7Reset your chatcolor!"
+			stop
+		if clicked slot is 31:
+			openChatColorMainMenu(player)
+			stop
+		if index of clicked slot is 0:
+			set {core::players::%player's uuid%::chatcolor::selected} to "&4" 
+			set {core::players::%player's uuid%::chatcolor::selectedFancy} to "DARK RED"
+		if index of clicked slot is 1:
+			set {core::players::%player's uuid%::chatcolor::selected} to "&c" 
+			set {core::players::%player's uuid%::chatcolor::selectedFancy} to "RED"
+		if index of clicked slot is 2:
+			set {core::players::%player's uuid%::chatcolor::selected} to "&6" 
+			set {core::players::%player's uuid%::chatcolor::selectedFancy} to "ORANGE"
+		if index of clicked slot is 3:
+			set {core::players::%player's uuid%::chatcolor::selected} to "&2" 
+			set {core::players::%player's uuid%::chatcolor::selectedFancy} to "GREEN"
+		if index of clicked slot is 4:
+			set {core::players::%player's uuid%::chatcolor::selected} to "&a" 
+			set {core::players::%player's uuid%::chatcolor::selectedFancy} to "LIME"
+		if index of clicked slot is 5:
+			set {core::players::%player's uuid%::chatcolor::selected} to "&e" 
+			set {core::players::%player's uuid%::chatcolor::selectedFancy} to "YELLOW"
+		if index of clicked slot is 6:
+			set {core::players::%player's uuid%::chatcolor::selected} to "&3" 
+			set {core::players::%player's uuid%::chatcolor::selectedFancy} to "DARK AQUA"
+		if index of clicked slot is 7:
+			set {core::players::%player's uuid%::chatcolor::selected} to "&b" 
+			set {core::players::%player's uuid%::chatcolor::selectedFancy} to "AQUA"
+		if index of clicked slot is 8:
+			set {core::players::%player's uuid%::chatcolor::selected} to "&1"
+			set {core::players::%player's uuid%::chatcolor::selectedFancy} to "DARK BLUE"
+		if index of clicked slot is 9:
+			set {core::players::%player's uuid%::chatcolor::selected} to "&9"
+			set {core::players::%player's uuid%::chatcolor::selectedFancy} to "BLUE"
+		if index of clicked slot is 10:
+			set {core::players::%player's uuid%::chatcolor::selected} to "&5" 
+			set {core::players::%player's uuid%::chatcolor::selectedFancy} to "DARK PURPLE"
+		if index of clicked slot is 11:
+			set {core::players::%player's uuid%::chatcolor::selected} to "&d"
+			set {core::players::%player's uuid%::chatcolor::selectedFancy} to "PURPLE"
+		if index of clicked slot is 12:
+			set {core::players::%player's uuid%::chatcolor::selected} to "&0" 
+			set {core::players::%player's uuid%::chatcolor::selectedFancy} to "BLACK"
+		if index of clicked slot is 13:
+			set {core::players::%player's uuid%::chatcolor::selected} to "&8"
+			set {core::players::%player's uuid%::chatcolor::selectedFancy} to "DARK GRAY"
+		if index of clicked slot is 14:
+			set {core::players::%player's uuid%::chatcolor::selected} to "&7" 
+			set {core::players::%player's uuid%::chatcolor::selectedFancy} to "GRAY"
+		if index of clicked slot is 15:
+			set {core::players::%player's uuid%::chatcolor::selected} to "&f"
+			set {core::players::%player's uuid%::chatcolor::selectedFancy} to "WHITE"
+		send "&7Selected: %{core::players::%player's uuid%::chatcolor::selected}%%{core::players::%player's uuid%::chatcolor::selectedFancy}%&7!"
+		openChatColorMenu(player)
+	if event-inventory is metadata tag "guiChatColorRainbow" of player:
+		cancel event
+		if slot index of clicked slot of event-inventory is dark gray stained glass pane:
+			stop
+		if index of clicked slot < 18:
+			set {_a::*} to 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0
+			if player does not have permission "antcore.chatcolor.rainbow.lightness.%{a_::%index of clicked slot+1%}%":
+				send "&cYou cannot use this this lightness!"
+				stop
+			else:
+				set {core::players::%player's uuid%::chatcolor::rainbow::lightness} to {_a::%index of clicked slot+1%}
+				send "&7Set your rainbow lightness to &f%{_a::%index of clicked slot+1%}%"
+		else:
+			set {_a::*} to 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32
+			if index of clicked slot < 35:
+				set {_dif} to difference between 18 and index of clicked slot
+				if player does not have permission "antcore.chatcolor.rainbow.wraparound.%{_a::%{_dif}+1%}%":
+					send "&cYou cannot use this wrap around!"
+					stop
+				else:
+					set {core::players::%player's uuid%::chatcolor::rainbow::wraparound} to {_a::%{_dif}+1%}
+					send "&7Set your rainbow wrap around to &f%{_a::%{_dif}+1%}%"
+		if clicked slot is 39 or 41:
+			if {core::players::%player's uuid%::chatcolor::rainbow::enabled} is not set:
+				set {core::players::%player's uuid%::chatcolor::rainbow::enabled} to "T"
+				send "&7Enabled rainbow chat format!"
+			else if {core::players::%player's uuid%::chatcolor::rainbow::enabled} is "T":
+				set {core::players::%player's uuid%::chatcolor::rainbow::enabled} to "F"
+				send "&7Disabled rainbow chat format!"
+			else:
+				set {core::players::%player's uuid%::chatcolor::rainbow::enabled} to "T"
+				send "&7Enabled rainbow chat format!"
+			openChatRainbowColorMenu(player)
+			stop
+		else if clicked slot is 38 or 42:
+			set {core::players::%player's uuid%::chatcolor::rainbow::lightness} to 0.7
+			set {core::players::%player's uuid%::chatcolor::rainbow::wraparound} to 12
+			send "&7Reset your rainbow chatcolor format!"
+			stop
+		else if clicked slot is 40:
+			openChatColorMainMenu(player)
+			stop
+		openChatRainbowColorMenu(player)
+function setMessageToFormat(p: player, m: string) :: string:
+	if {core::players::%{_p}'s uuid%::chatcolor::rainbow::enabled} is "T":
+		set {_m} to blackAndWhiteRainbow({_m}, {core::players::%{_p}'s uuid%::chatcolor::rainbow::wraparound}, {core::players::%{_p}'s uuid%::chatcolor::rainbow::lightness})
+		return {_m}
+	else:
+		set {_m} to "%{core::players::%{_p}'s uuid%::chatcolor::selected}%%{_m}%"
+		return {_m}

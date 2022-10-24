@@ -1,0 +1,251 @@
+#!Author: Antritus
+#!Giving this skript to anybody without permissions is not suitable and will get you fucked
+#!I do not suggest stealing this.
+#!I wish this skript to be kept more private and not shared due to it taking a long time to develop to its current state.
+#! I do not think this skript is no where ready but its fine for now.
+#? What can I do if the skript breaks?
+#! You can ask the author of the skript for help
+on load:
+	set {_v} to "1.0.0"
+	set {_g} to "AntCore - Antritus - 21.12 - 16/10/2022"
+	send formatted "<sgt:Antweetus##5899><ttp:&7Click here to copy the discord of the author of this skript!>&8[&3A&bC&7Skripts&8] &7Loading &3Ant&bCore &7combat system. This skript is a protototype system and not ready! . &7Author: Antritus (Hower for info)<reset>" to players
+	send "[AntCore] Loading AntCore combat system! Author: Antritus!" to console
+on damage of player:
+	if event is cancelled:
+		stop
+	if attacker is victim:
+		stop
+	if attacker is end crystal:
+		set {_attacker} to {core::end_crystal::uuid}
+		if {core::players::%victim's uuid%::combat::tag} is not set:
+			send "&cYou are in combat for 10 seconds!" to victim
+			add victim's uuid to {core::combat::tagged::*}
+		if {core::players::%{_attacker}%::combat::tag} is not set:
+			send "&cYou are in combat for 10 seconds!" to {_attacker} parsed as player
+			add {_attacker} to {core::combat::tagged::*}
+		set {core::players::%victim's uuid%::combat::tag} to true
+		set {core::players::%victim's uuid%::combat::timer} to now
+		add 10 seconds to {core::players::%victim's uuid%::combat::timer}
+		set {core::players::%{_attacker}%::combat::tag} to true
+		set {core::players::%{_attacker}%::combat::timer} to now
+		add 10 seconds to {core::players::%{_attacker}%::combat::timer}
+		set {core::players::%victim's uuid%::combat::lastTagged} to {_attacker}
+		set {core::players::%{_attacker}%::combat::lastTagged} to victim
+		set {core::players::%victim's uuid%::combat::lastTaggedUUID} to {_attacker}
+		set {core::players::%{_attacker}%::combat::lastTaggedUUID} to victim's uuid
+		set {core::players::%victim's uuid%::combat::sec} to 10
+		set {core::players::%{_attacker}%::combat::sec} to 10
+		set {core::players::%victim's uuid%::combat::is} to true
+		set {core::players::%{_attacker}'s uuid%::combat::is} to true
+		stop
+	if metadata tag "anchorAttacker" of victim is set:
+		set {_attacker} to metadata tag "lastAttackerUUID" of victim
+		if {core::players::%victim's uuid%::combat::tag} is not set:
+			send "&cYou are in combat for 10 seconds!" to victim
+			add victim's uuid to {core::combat::tagged::*}
+		if {core::players::%{_attacker}%::combat::tag} is not set:
+			send "&cYou are in combat for 10 seconds!" to {_attacker} parsed as player
+			add {_attacker} to {core::combat::tagged::*}
+		set {core::players::%victim's uuid%::combat::tag} to true
+		set {core::players::%victim's uuid%::combat::timer} to now
+		add 10 seconds to {core::players::%victim's uuid%::combat::timer}
+		set {core::players::%{_attacker}%::combat::tag} to true
+		set {core::players::%{_attacker}%::combat::timer} to now
+		add 10 seconds to {core::players::%{_attacker}%::combat::timer}
+		set {core::players::%victim's uuid%::combat::lastTagged} to {_attacker}
+		set {core::players::%{_attacker}%::combat::lastTagged} to victim
+		set {core::players::%victim's uuid%::combat::lastTaggedUUID} to {_attacker}
+		set {core::players::%{_attacker}%::combat::lastTaggedUUID} to victim's uuid
+		set {core::players::%victim's uuid%::combat::sec} to 10
+		set {core::players::%{_attacker}%::combat::sec} to 10
+		set {core::players::%victim's uuid%::combat::is} to true
+		set {core::players::%{_attacker}'s uuid%::combat::is} to true
+		stop
+	attacker is a player
+	if {core::players::%victim's uuid%::combat::tag} is not set:
+		send "&cYou are in combat for 10 seconds!" to victim
+		add victim's uuid to {core::combat::tagged::*}
+	if {core::players::%attacker's uuid%::combat::tag} is not set:
+		send "&cYou are in combat for 10 seconds!" to attacker
+		add attacker's uuid to {core::combat::tagged::*}
+	set {core::players::%victim's uuid%::combat::tag} to true
+	set {core::players::%victim's uuid%::combat::timer} to now
+	add 10 seconds to {core::players::%victim's uuid%::combat::timer}
+	set {core::players::%attacker's uuid%::combat::tag} to true
+	set {core::players::%attacker's uuid%::combat::timer} to now
+	add 10 seconds to {core::players::%attacker's uuid%::combat::timer}
+	set {core::players::%victim's uuid%::combat::lastTagged} to attacker
+	set {core::players::%attacker's uuid%::combat::lastTagged} to victim
+	set {core::players::%victim's uuid%::combat::lastTaggedUUID} to attacker's uuid
+	set {core::players::%attacker's uuid%::combat::lastTaggedUUID} to victim's uuid
+	set {core::players::%victim's uuid%::combat::sec} to 10
+	set {core::players::%attacker's uuid%::combat::sec} to 10
+	set {core::players::%victim's uuid%::combat::is} to true
+	set {core::players::%attacker's uuid%::combat::is} to true
+on death of player:
+	if event is cancelled:
+		stop
+	set {core::players::%victim's uuid%::stats::lastDied} to now
+	delete {core::players::%victim's uuid%::combat::*}
+	set {core::players::%victim's uuid%::stats::killstreak} to 0
+	add 1 to {core::players::%victim's uuid%::stats::deaths}
+	add 1 to {core::players::%victim's uuid%::stats::deathstreak}
+	chance of 0.1%:
+		set {_item} to sunflower of lure 1 named "&eCoin" with lore "&7Can be used at /spawn for items!" with all flags hidden
+		if attacker can hold {_item}:
+			give attacker 1 of {_item}
+		else:
+			drop 1 of {_item} at victim's location
+	remove victim's uuid from {core::combat::tagged::*}
+	set the death message to "&c%victim% &7died!"
+	if attacker is a player:
+		add 1 to {core::players::%attacker's uuid%::stats::kills}
+		add 1 to {core::players::%attacker's uuid%::stats::killstreak}
+		set {core::players::%attacker's uuid%::stats::deathstreak} to 0
+		if attacker's tool is not air:
+			if displayname of attacker's tool is set:
+				set the death message to "&c%victim% &7died to <##03fc35>%attacker% &8[&c%attacker's health*2%&8]&7 using [&f%attacker's tool's displayname%&7]!"
+			else:
+				set the death message to "&c%victim% &7died to <##03fc35>%attacker% &8[&c%attacker's health*2%&8]&7!"
+		else:
+			set the death message to "&c%victim% &7died to <##03fc35>%attacker% &8[&c%attacker's health*2%&8]&7!"
+	else:
+		if metadata tag "lastAttacked" of victim is set:
+			if difference between now and metadata tag "lastAttacked" of victim > 5 ticks:
+				delete metadata tag "anchorAttackerLoc" of victim
+				delete metadata tag "anchorAttacker" of victim
+				delete metadata tag "lastAttacker" of victim
+				delete metadata tag "lastAttackerUUID" of victim
+				delete metadata tag "lastAttacked" of victim
+		if attacker is end crystal:
+			set {_attacker} to {core::end_crystal::player}
+			set {_uuid} to {core::end_crystal::uuid}
+			if {_attacker} is not set:
+				set the death message to "&c%victim% &7died to <##03fc35>End Crystal&7!"
+				stop
+			delete {core::end_crystal::player}
+			delete {core::end_crystal::uuid}
+			add 1 to {core::players::%{_uuid}%::stats::kills}
+			add 1 to {core::players::%{_uuid}%::stats::killstreak}
+			set {core::players::%{_uuid}%::stats::deathstreak} to 0
+			set the death message to "&c%victim% &7died to <##03fc35>%{_attacker}% &7using &fEnd Crystal!"
+		if metadata tag "anchorAttacker" of victim is set:
+			if difference between now and metadata tag "lastAttacked" of victim > 10 ticks:
+				stop
+			set the death message to "&c%Victim% &7died to <##03fc35>%metadata tag "lastAttacker" of victim% &7using &fRespawn Anchor&7!"
+			delete metadata tag "anchorAttacker" of victim
+			delete metadata tag "anchorAttackerLoc" of victim
+			delete metadata tag "lastAttacker" of victim
+			add 1 to {core::players::%metadata tag "lastAttackerUUID" of victim%::stats::kills}
+			add 1 to {core::players::%metadata tag "lastAttackerUUID" of victim%::stats::killstreak}
+			set {core::players::%metadata tag "lastAttackerUUID" of victim%::stats::deathstreak} to 0
+
+on right click on respawn anchor:
+	if player's tool is glowstone:
+		if {core::respawn_anchors::*} does not contain location of targeted block:
+			add location of targeted block to {core::respawn_anchors::*}
+		add 1 to {core::respawn_anchor::%location of targeted block%}
+		if {core::respawn_anchor::%location of targeted block%} >= 5:
+			send "&cExploded!"
+			set {_exp} to true
+	else:
+		if {core::respawn_anchor::%location of targeted block%} >= 1:
+			send "&cExploded!"
+			set {_exp} to true
+	if {_exp} is true:
+		delete {core::respawn_anchor::%location of targeted block%}
+		remove location of targeted block from {core::respawn_anchors::*}
+		loop players in radius 9 of targeted block:
+			add loop-player to {_p::*}
+			set metadata tag "anchorAttackerLoc" of loop-player to location of targeted block
+			set metadata tag "anchorAttacker" of loop-player to true
+			set metadata tag "lastAttacker" of loop-player to player
+			set metadata tag "lastAttackerUUID" of loop-player to player's uuid
+			set metadata tag "lastAttacked" of loop-player to now
+		wait 1 tick
+		loop {_p::*}:
+			if metadata tag "anchorAttackerLoc" of loop-value is location of targeted block:
+				delete metadata tag "anchorAttackerLoc" of loop-value
+				delete metadata tag "anchorAttacker" of loop-value
+				delete metadata tag "lastAttacker" of loop-value
+				delete metadata tag "lastAttackerUUID" of loop-value
+				delete metadata tag "lastAttacked" of loop-value
+on damage of end crystal:
+	if event is cancelled:
+		stop
+	set {core::end_crystal::player} to attacker
+	set {core::end_crystal::uuid} to attacker's uuid
+on quit:
+	if {core::players::%player's uuid%::combat::tagged} is set:
+		broadcast "%nl%&4&lCombat Tag%nl%&cRemember quitting in combat will count as death!%nl%&f%player% &cleft while in combat!%nl%"
+		set {_o} to {core::players::%player's uuid%::combat::lastTagged}
+		delete {core::players::%player's uuid%::combat::*}
+		remove player's uuid from {core::combat::tagged::*}
+		set {core::players::%player's uuid%::combat::logged} to true
+		set {core::players::%player's uuid%::combat::lastTagged} to {_o}
+		add 1 to {core::players::%{core::players::%player's uuid%::combat::lastTaggedUUID}%::stats::kills}
+		add 1 to {core::players::%{core::players::%player's uuid%::combat::lastTaggedUUID}%::stats::killstreak}
+		add 1 to {core::players::%player's uuid%::stats::deaths}
+		add 1 to {core::players::%player's uuid%::stats::deathstreak}
+		add 1 to {core::players::%player's uuid%::stats::combatLogs}
+on resurrect attempt:
+	if player's tool is not totem of undying:
+		if player's offhand tool is not totem of undying:
+			stop 
+	add 1 to {core::players::%player's uuid%::stats::totemPops}
+	if {core::players::%player's uuid%::combat::lastTaggedUUID} is set:
+		add 1 to {core::players::%{core::players::%player's uuid%::combat::lastTaggedUUID}%::stats::totemsPopped}
+on join:
+	if {core::players::%player's uuid%::combat::logged} is true:
+		send "%nl%&4&lCombat Tag%nl%&cRemember quitting in combat will count as death!%nl%&cYou left when in combat with &f%{core::players::%player's uuid%::combat::lastTagged}%&c!%nl%"
+		delete {core::players::%player's uuid%::combat::*}
+every second:
+	loop {core::combat::tagged::*}:
+		remove 1 from {core::players::%loop-value%::combat::sec}
+		if {core::players::%loop-value%::combat::timer} <= now:
+#		if {core::players::%loop-value%::combat::sec} <= 0:
+			remove loop-value from {core::combat::tagged::*}
+			delete {core::players::%loop-value%::combat::*}
+			send "&cYou are no longer in combat!" to loop-value parsed as player
+command /givecoin:
+	permission: antcore.givecoin
+	trigger:
+		give player 1 of sunflower of lure 1 named "&eCoin" with lore "&7Can be used at /spawn for items!" with all flags hidden
+command /setstat [<player>] [<string>] [<integer>]:
+	permission: antcore.setstats
+	trigger:
+		set {_p} to arg 1
+		if arg 1 is not set:
+			set {_p} to player
+		set {_core::*} to "kills", "killstreak", "deaths", "combatLogs", "totemsPopped", "totemPops"
+		if {_core::*} does not contain arg 2:
+			if arg 2 is "reset":
+				loop {_core::*}:
+					set {core::players::%{_p}'s uuid%::stats::%loop-value%} to 0
+				send "&cReset statistics of %{_p}%!"
+				stop
+			send "&cUnknown statistic! (%{_core::*}%"
+			stop
+		if arg 3 is not set:
+			send "&cYou need to select an amount of the statistic."
+			stop
+		set {core::players::%{_p}'s uuid%::stats::%arg 2%} to arg 3
+		send "&cChanged value of %{_p}% to %arg 3% (%arg 2%)"
+on tab complete:
+	if event-string is "/setstat":
+		set tab completions for position 1 to players
+		set tab completions for position 2 to "reset", "kills", "killstreak", "deaths", "combatLogs", "totemsPopped", "totemPops"
+command /stats [<player>] [<string>]:
+	trigger:
+		set {_p} to player
+		if arg 1 is set:
+			set {_p} to arg 1
+		send "&aStatistics of &f%{_p}%"
+		send "&7 Kills: &f%{core::players::%{_p}'s uuid%::stats::kills} ? 0%"
+		send "&7 Killstreak: &f%{core::players::%{_p}'s uuid%::stats::killstreak} ? 0%"
+		send "&7 Player Totem Activated: &f%{core::players::%{_p}'s uuid%::stats::totemsPopped} ? 0%"
+		send "&7 Totems Activated: &f%{core::players::%{_p}'s uuid%::stats::totemPops} ? 0%"
+		send "&7 Deaths: &f%{core::players::%{_p}'s uuid%::stats::deaths} ? 0%"
+		set {_kd} to {core::players::%{_p}'s uuid%::stats::kills} / {core::players::%{_p}'s uuid%::stats::deaths}
+		send "&7 K/D: &f%{_kd}%"
+		send "&7 Combat Logs: &f%{core::players::%{_p}'s uuid%::stats::combatLogs} ? 0%"

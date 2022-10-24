@@ -1,0 +1,55 @@
+function updateScoreboard(p: player):
+    if {core::players::%{_p}'s uuid%::scoreboard::enabled}  is not set:
+        removeScoreboard({_p})
+        stop
+    if {core::players::%{_p}'s uuid%::scoreboard::enabled} is false:
+        removeScoreboard({_p})
+        stop
+    set title of {_p}'s scoreboard to "  &6&lRacist&e&lKits &8| &fS1  "
+    set line 15 of {_p}'s scoreboard to "&6Stats:"
+    set line 14 of {_p}'s scoreboard to "&7 Balance: &f%{core::players::%{_p}'s uuid%::stats::balance} ? 0%"
+    set line 13 of {_p}'s scoreboard to "&7 Kills: &f%{core::players::%{_p}'s uuid%::stats::kills} ? 0%"
+    set line 12 of {_p}'s scoreboard to "&7 Killstreak: &f%{core::players::%{_p}'s uuid%::stats::killstreak} ? 0%"
+    set line 11 of {_p}'s scoreboard to "&7 Deaths: &f%{core::players::%{_p}'s uuid%::stats::deaths} ? 0%"
+    set line 10 of {_p}'s scoreboard to "&7 K/D: &f%{core::players::%{_p}'s uuid%::stats::killstreak} ? 0/{core::players::%{_p}'s uuid%::stats::deaths} ? 0%"
+    if {core::players::%{_p}'s uuid%::combat::tag} is set:
+        set {core::players::%{_p}'s uuid%::scoreboard::combat} to true
+        set line 9 of {_p}'s scoreboard to "&cIn Combat:"
+        set line 8 of {_p}'s scoreboard to "&7 For: &f%{core::players::%{_p}'s uuid%::combat::sec} ? 0%s"
+        set line 7 of {_p}'s scoreboard to "&7 With: &f%{core::players::%{_p}'s uuid%::combat::lastTagged} ? "&cUnknown"%"
+    else:
+        if {core::players::%{_p}'s uuid%::scoreboard::combat} is set:
+            delete {core::players::%{_p}'s uuid%::scoreboard::combat}
+            removeScoreboard({_p})
+            updateScoreboard({_p})
+    set line 2 of {_p}'s scoreboard to ""
+    set line 1 of {_p}'s scoreboard to " &7&oracistkits.minehut.gg"
+#        set line 9 of {_p}'s scoreboard to "&7 For: &f%{core::players::%{_p}'s uuid%::combat::}%"
+ #       set line 9 of {_p}'s scoreboard to "&7 For: &f%{core::players::%{_p}'s uuid%::combat::sec}%"
+  #      set line 9 of {_p}'s scoreboard to "&7 For: &f%{core::players::%{_p}'s uuid%::combat::sec}%"
+
+function removeScoreboard(p: player):
+    clear {_p}'s scoreboard
+on join:
+    if {core::players::%player's uuid%::scoreboard::enabled} is not set:
+        set {core::players::%player's uuid%::scoreboard::enabled} to true
+    while player is online:
+        updateScoreboard(player)
+        wait 0.5 second 
+function disableScoreboard(p: player):
+    set {core::players::%{_p}'s uuid%::scoreboard::enabled} to false
+function enableScoreboard(p: player):
+    set {core::players::%{_p}'s uuid%::scoreboard::enabled} to true
+
+command /togglescoreboard:
+    aliases: scoreboard
+    trigger:
+        set {_p} to player
+        if ({core::players::%{_p}'s uuid%::scoreboard::enabled} = true):
+            set {core::players::%{_p}'s uuid%::scoreboard::enabled} to false 
+            send "&cDisabled scoreboard!"
+            updateScoreboard(player)
+        else:
+            set {core::players::%{_p}'s uuid%::scoreboard::enabled} to true
+            send "&aEnabled scoreboard!"
+            updateScoreboard(player)
