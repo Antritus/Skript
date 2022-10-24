@@ -1,0 +1,15 @@
+on mine of sandstone block:
+	cancel event
+	cancel drops
+	set event-block to air
+	drop (random integer between 0 and 3) of iron ingot at event-block
+	drop (random integer between 0 and 2) of gold ingot at event-block
+	drop (random integer between 0 and 1) of emerald at event-block
+	drop (random integer between 0 and 2) of steak at event-block
+	chance of 30%:
+		set {_a} to random integer between 0 and 2
+		drop {_a} of diamond at event-block
+		chance of 5%:
+			drop 1 of golden apple at event-block
+			chance of 1%:
+				drop 1 of enchanted golden apple at event-block

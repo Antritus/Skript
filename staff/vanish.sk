@@ -1,0 +1,66 @@
+command /vanish [<text>]:
+	aliases: v
+	permission: antcore.staff.vanish
+	permission message: &cYou cannot use this command!
+	trigger:
+		if arg 1 is not "-s" or "-silent":
+			if arg 1 is set:
+				send "&cUnknown sub command!"
+				stop
+		set {_action} to "&avanished"
+		if {core::players::%player's uuid%::staff::vanished} is not set:
+			add player to {core::staff::vanished::*}
+			apply night vision without any particles to player for 500000 seconds
+			hide player from all players where [input doesn't have permission "antcore.staff.vanish.see"]
+			console command "lp user %player% permission set tab.staff false"
+			set {core::players::%player's uuid%::staff::vanished} to true
+			if arg 1 is not set:
+				set {_msg} to {core::server::format::leave}
+				replace "{prefix}" with player's prefix in {_msg}
+				replace "{player}" with player's name in {_msg}
+				replace "{displayname}" with player's displayname in {_msg}
+				send {_msg} to all players where [input does not have permission "antcore.staff.vanish.see"]
+			send "&f%player% Vanished" 
+		else:
+			set {_action} to "&cunvanished"
+			remove player from {core::staff::vanished::*}
+			remove night vision from player
+			send action bar "" to player
+			reveal player to all players
+			console command "lp user %player% permission unset tab.staff"
+			delete {core::players::%player's uuid%::staff::vanished}
+			if arg 1 is not set:
+				set {_msg} to {core::server::format::join}
+				replace "{prefix}" with player's prefix in {_msg}
+				replace "{player}" with player's name in {_msg}
+				replace "{displayname}" with player's displayname in {_msg}
+				send {_msg} to all players where [input does not have permission "antcore.staff.vanish.see"]
+			send "&f%player% Vanished" 
+		send "&7You %{_action}%&7!"
+every 2 seconds:
+    send action bar "&7Reminder! You are &avanished&7!" to {stafF::vanished::*}
+				
+on tab complete:
+	if event-string is "/vanish" or "/v":
+		set tab completions for position 1 to "-silent" and "-s"
+				
+command /isvanished [<offlineplayer>]:
+	permission: staff.vanish
+	permission message: &cYou do not have permission to execute this command!
+	trigger:
+		if arg-1 is not set:
+			if {core::players::%player's uuid%::staff::vanished} is not set:
+				send "&7You are &cnot vanished&7!"
+			else:
+				send "&7You are &avanished"
+			stop
+		if  {core::players::%arg 1's uuid%::staff::vanished} is not set:
+			send "&f%arg 1% &7is &cnot vanished&7!"
+		else:
+			send "&f%arg 1% &7is &avanished&7!"
+
+on teleport:
+	wait 40 ticks
+	if  {core::players::%player's uuid%::staff::vanished} is true:
+		hide player from all players where [input doesn't have permission "antcore.staff.vanish.see"]
+#		set player's gamemode to spectator

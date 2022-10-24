@@ -1,0 +1,37 @@
+function removeFirst(num: integer, msg: text) :: text:
+	return subtext of {_msg} from characters {_num} to (length of {_msg})
+function removeLast(msg: string) :: string:
+	return subtext of {_msg} from characters 1 to (length of {_msg}-1)
+function getLast(msg: string) :: string:
+	return subtext of {_msg} from characters (length of {_msg} ) to (length of {_msg})
+function getFirst(msg: string) :: string:
+	return subtext of {_msg} from characters (1) to (1)
+function getCharacterAt(num: integer, msg: string) :: string:
+	return subtext of {_msg} from characters ({_num}) to ({_num})
+function removeCharacterAt(num: integer, msg: string) :: string:
+	set {_args::1} to subtext of {_msg} from (1) to {_num}-1
+	set {_args::2} to subtext of {_msg} from {_num}+1 to length of {_msg}
+	set {_msg} to join {_args::1} and {_args::2}
+	return {_msg}
+function getCharactersAt(s: integer, e: integer, msg: string) :: string:
+	set {_args::1} to subtext of {_msg} from ({_s}) to {_e}
+	return {_args::1}
+function removeCharactersAt(s: integer, e: integer, msg: string) :: string:
+	set {_args::1} to subtext of {_msg} from (1) to {_s}-1
+	set {_args::2} to subtext of {_msg} from {_e}+1 to length of {_msg}
+	set {_msg} to join {_args::1} and {_args::2}
+	return {_msg}
+
+on load:
+	add "A", "a", "B", "B", "b", "C", "c", "D", "d", "E", "e", "F", "f", "G", "g", "H", "h", "I", "i", "J", "j", "K", "k", "L", "l", "M", "m", "N", "n", "O", "o", "P", "p", "Q", "q", "R", "r", "S", "s", "T", "t", "U", "u", "V", "v", "W", "w", "X", "x", "Y", "y", "Z", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "!", "@", "#", "$", "%%", "&", "*", "(", ")", "-", "_", "+", "{", "}", "[", "]", ":", ";", """", "'", "<", ">", "?", "/", "\", "|", "~", "`", ".", ",", " ", "def" to {antcore::characters::chars::*}
+	add 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 5, 5, 5, 5, 3, 1, 5, 5, 5, 4, 5, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 6, 5, 5, 5, 5, 5, 5, 4, 4, 5, 5, 5, 5, 4, 4, 3, 3, 1, 1, 3, 1, 4, 4, 5, 5, 5, 1, 5, 2, 1, 1, 3, 4 to {antcore::characters::pixels::*}
+	set {antcore::motd::center_pixel} to 127
+	set {antcore::motd::max_pixel} to 240
+	set {antcore::motd::center_pixel} to 154
+	set {antcore::motd::max_pixel} to 250
+	loop size of {antcore::characters::pixels::*} times:
+		
+effect send centered [message] %string% to %players%:
+	parse:
+		continue
+	trigger:

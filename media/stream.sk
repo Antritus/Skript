@@ -1,0 +1,32 @@
+command /twitchad [<string>]:
+    permission: antcore.media.twitchad
+    permission message: &cNo advertising for you!
+    cooldown: 0.5 hour
+    cooldown message: &cNo advertising for you!
+    cooldown bypass: antcore.media.stream.bypass
+    trigger:
+        send formatted "%nl%&5&lMEDIA &8&l &5&lTWITCH%nl%&rGo check &e%player%&r's stream!%nl%&dLink: <url:%arg 1%>&f%arg 1%%nl%&c"
+command /youtubead [<string>]:
+    permission: antcore.media.youtubead
+    permission message: &cNo advertising for you!
+    cooldown: 0.5 hour
+    cooldown message: &cNo advertising for you!
+    cooldown bypass: antcore.media.youtube.bypass
+    trigger:
+        send formatted "%nl%&5&lMEDIA &8&l &4&lYOU&f&lTUBE%nl%&rGo check &e%player%&r's channel!%nl%&dLink: <url:%arg 1%>&f%arg 1%%nl%&c"
+command /tiktok [<string>]:
+    permission: antcore.media.tiktokad
+    permission message: &cNo advertising for you!
+    cooldown: 0.5 hour
+    cooldown message: &cNo advertising for you!
+    cooldown bypass: antcore.media.titktok.bypass
+    trigger:
+        send formatted "%nl%&5&lMEDIA &8&l &b&lTIK&d&lTOK%nl%&rGo check &e%player%&r tiktok!%nl%&dLink: <url:%arg 1%>&f%arg 1%%nl%&c"
+command /ad [<string>]:
+    permission: antcore.media.otherad
+    permission message: &cNo advertising for you!
+    cooldown: 0.5 hour
+    cooldown message: &cNo advertising for you!
+    cooldown bypass: antcore.media.titktok.bypass
+    trigger:
+        send formatted "%nl%&5&lMEDIA%nl%&rGo check &e%player%&r!%nl%&dLink: <url:%arg 1%>&f%arg 1%%nl%&c"

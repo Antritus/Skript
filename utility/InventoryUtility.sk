@@ -1,0 +1,23 @@
+
+effect set %player%'s [the] current hotbar slot to %integer%:
+    parse:
+        continue
+    trigger:
+        if expr-2 > 8:
+            send "&8[&3Ant&bCore&8] &7Effects (&fset %%player%%'s [the] current hotbar slot to %%integer%%): &cMaxinium slot is 9 (8)" to console
+            stop
+        if expr-2 < 0:
+            send "&8[&3Ant&bCore&8] &7Effects (&fset %%player%%'s [the] current hotbar slot to %%integer%%): &cMinium slot is 1 (0)" to console
+            stop
+        expr-1.getInventory().setHeldItemSlot(expr-2)
+effect set [the] current hotbar slot of %player% to %integer%:
+    parse:
+        continue
+    trigger:
+        if expr-2 > 8:
+            send "&8[&3Ant&bCore&8] &7Effects (&fset [the] current hotbar slot of %%player%% to %%integer%%): &cMaxinium slot is 9 (8)" to console
+            stop
+        if expr-2 < 0:
+            send "&8[&3Ant&bCore&8] &7Effects (&fset [the] current hotbar slot of %%player%% to %%integer%%): &cMinium slot is 1 (0)" to console
+            stop
+        expr-1.getInventory().setHeldItemSlot(expr-2)

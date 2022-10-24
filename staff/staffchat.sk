@@ -1,0 +1,28 @@
+command /sc [<string>]:
+	aliases: staffchat
+	permission: antcore.staff.staffchat
+	permission message: &cYou cannot use this command!
+	trigger:
+		if arg 1 is not set:
+			set {_action} to "&aEnabled"
+			if {core::players::%player's uuid%::staff::chat} is true:
+				set {_action} to "&cDisabled"
+				set {core::players::%player's uuid%::staff::chat} to false
+			else:
+				set {core::players::%player's uuid%::staff::chat} to true
+			send "&7You have %{_action}% &7staff chat."
+			stop
+		loop all players:
+			if loop-player does not have permission "antcore.staff.staffchat.receive":
+				continue
+			if sender is console:
+				send "&7[&bStaff&7] &fConsole&7: &f%arg 1%" to loop-player
+			else:
+				send "&7[&bStaff&7] &f%player's prefix%%player%&7: &f%arg 1%" to loop-player
+on chat:
+	if {core::players::%player's uuid%::staff::chat} is true:
+		cancel event
+		loop all players:
+			if loop-player does not have permission "antcore.staff.staffchat.receive":
+				continue
+			send "&7[&bStaff&7] &f%player's prefix%%player%&7: &f%message%" to loop-player

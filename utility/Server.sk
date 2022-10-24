@@ -1,0 +1,20 @@
+import:
+	org.bukkit.Bukkit
+	ch.njol.skript.Skript
+	java.nio.charset.StandardCharsets
+effect disable minehut cosmetics:
+    parse:
+        Bukkit.getServer().getPluginManager().getPlugin()
+effect (send|show) [server] brand %string% (to|for) %players%:
+	parse:
+		Bukkit.getMessenger().registerOutgoingPluginChannel(Skript.getInstance(), "minecraft:brand")
+		continue
+	trigger:
+		set {_string::*} to ...expr-1.getBytes(StandardCharsets.UTF_8)
+		loop 255 times:
+			set {_bytes::%loop-value%} to {_string::%loop-value%} ? 0
+		loop exprs-2:
+			loop-value.addChannel("minecraft:brand")
+			loop-value.sendPluginMessage(Skript.getInstance(), "minecraft:brand", [(size of {_string::*}), {_bytes::*}])
+on join:
+    show brand "§3Ant§bCore&r - &eSkript&f" to player

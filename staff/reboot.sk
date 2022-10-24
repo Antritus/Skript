@@ -1,0 +1,54 @@
+command /reboot [<text>] [<text>]:
+	aliases: /restarts
+	trigger:
+		if player does not have permission "admin.reboot":
+			send "&cYou do not have permission to execute this command!"
+			stop
+		if {core::reboot::is} is set:
+			if arg 1 is not "cancel":
+				if arg 2 is not "-b" or "-bypass":
+					send "&cA reboot is active currently! To cancel the reboot type &7/reboot cancel&c to cancel it!"
+					stop
+				if arg 1 parsed as integer is integer:
+					send "&cA reboot is active currently! To cancel the reboot type &7/reboot cancel&c to cancel it!"
+					stop
+			else:
+				send title "&4&lServer Reboot Cancelled!" with subtitle "&7&oServer reboot has been cancelled!" to all players for 5 seconds with fadein 10 ticks and fadeout 10 ticks
+				send "%nl%&4&lServer Reboot has been cancelled!%nl%&c" to all players
+				stop
+		set {_time} to arg 1 parsed as integer
+		set {_reason} to arg 2
+		if {core::reboot::is} is set:
+			set {_reason} to {core::reboot::reason}
+		if {_reason} is not set:
+			set {_reason} to "Unknown Reason"
+		send title "&cServer Reboot!" with subtitle "&7%{_reason}% &e- &a%{_time}%&7s" to all players  for 5 seconds with fadein 10 ticks and fadeout 10 ticks
+		send "%nl%&cServer Reboot! &7The server is rebooting in &a%{_time}%&7 seconds!%nl%&7Reason: &f%{_reason}%&7!%nl%&aYou are currently playing in: &f%{core::info::ip}%%nl%&c" to all players
+		set {core::reboot::is} to true
+		set {core::reboot::reason} to {_reason}
+		set {core::reboot::time} to {_time}
+on skript unload:
+	delete {core::reboot::*}
+
+on join:
+	if {core::reboot::seconds} is set:
+		wait 3 seconds
+		send title "&cServer Reboot!" with subtitle "&7%{_reason}% &e- &a%{_time}%&7s" to player for 5 seconds with fadein 10 ticks and fadeout 10 ticks
+		send "%nl%&cServer Reboot! &7The server is rebooting in &a%{_time}%&7 seconds!%nl%&7Reason: &f%{_reason}%&7!%nl%&aYou are currently playing in: &f%{core::info::ip}%%nl%&c" to player
+
+every second:
+	if {core::reboot::is} is set:
+		if {core::reboot::time} is 61:
+			send title "&cServer Reboot!" with subtitle "&7%{_reason}% &e- &a%{_time}%&7s" to all players  for 5 seconds with fadein 10 ticks and fadeout 10 ticks
+		if {core::reboot::time} is 31:
+			send title "&cServer Reboot!" with subtitle "&7%{_reason}% &e- &a%{_time}%&7s" to all players  for 5 seconds with fadein 10 ticks and fadeout 10 ticks
+		remove 1 from {reboot::time}
+		if {core::reboot::time} is between 0 and 15:
+			send title "&cServer Reboot!" with subtitle "&7%{_reason}% &e- &a%{_time}%&7s" to all players  for 5 seconds with fadein 10 ticks and fadeout 10 ticks
+		if {core::reboot::time} < 0:
+			send title "&cServer Reboot!" with subtitle "&7Reconnect later! &aCurrently playing: &f%{core::info::ip}%&a!" to all players  for 20 seconds with fadein 10 ticks and fadeout 10 ticks
+		if {core::reboot::time} < -50:
+			delete {core::reboot::*}
+			send title "&4&lServer Reboot Cancelled!" with subtitle "&7&oServer reboot has been cancelled!" to all players for 5 seconds with fadein 10 ticks and fadeout 10 ticks
+			send "%nl%&4&lServer Reboot has been cancelled!%nl%&c" to all players
+			stop

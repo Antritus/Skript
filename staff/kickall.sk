@@ -1,0 +1,11 @@
+command /kickall [<string>]:
+	permission: antcore.staff.kickall
+	permission message: &cYou cannot use this command!
+	trigger:
+		set {_reason} to arg 1
+		if {_reason} is not set:
+			set {_reason} to "&cUnknown Reason"
+		loop all players:
+			if loop-player does not have permission "antcore.staff.kickall.bypass":
+				continue
+			kick loop-player due to {_reason}

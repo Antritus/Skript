@@ -1,0 +1,199 @@
+on placeholderapi placeholder request for the prefix "kits":
+	set {_todo} to "TD"
+	# Stats
+	if the identifier is "player_kills":
+		set the result to "%{core::players::%player's uuid%::stats::kills} ? 0%"
+	else if the identifier is "player_killstreak":
+		set the result to "%{core::players::%player's uuid%::stats::killstreak} ? 0%"
+	else if the identifier is "player_deaths":
+		set the result to "%{core::players::%player's uuid%::stats::deaths} ? 0%"
+	else if the identifier is "player_deathstreak":
+		set the result to "%{core::players::%player's uuid%::stats::deathstreak} ? 0%"
+	else if the identifier is "player_kd":
+		set the result to "%{core::players::%player's uuid%::stats::kills}/{core::players::%player's uuid%::stats::deaths}%"
+	else if the identifier is "player_kd_na":
+		set {_kd} to {core::players::%player's uuid%::stats::kills}/{core::players::%player's uuid%::stats::deaths}
+		if "%{_kd}%" is "Infinity":
+			set {_kd} to "N/A"
+		set the result to "%{_kd}%"
+	else if the identifier is "player_kd_small_infinity":
+		set {_kd} to {core::players::%player's uuid%::stats::kills}/{core::players::%player's uuid%::stats::deaths}
+		if "%{_kd}%" is "Infinity":
+			set {_kd} to "Inf"
+		set the result to "%{_kd}%"
+	else if the identifier is "player_totempops":
+		set the result to "%{core::players::%player's uuid%::stats::totemPops} ? 0%"
+	else if the identifier is "player_totemspopped":
+		set the result to "%{core::players::%player's uuid%::stats::totemsPopped} ? 0%"
+	else if the identifier is "player_combatlogs":
+		set the result to "%{core::players::%player's uuid%::stats::combatLogs} ? 0%"
+	# Ping
+	else if the identifier is "player_ping":
+		set the result to "%ping of player%"
+	# Clan
+	else if the identifier is "player_clan":
+		set the result to "%{core::players::%player's uuid%::clans::name} ? "None"%"
+	# Balance
+	else if the identifier is "player_balance":
+		set the result to "%{core::players::%player's uuid%::economy::balance} ? 0%"
+	# Nickname
+	else if the identifier is "player_nickname":
+		set the result to player's displayname
+	else if the identifier is "player_displayname":
+		set the result to player's displayname
+	# AFK
+	else if the identifier is "player_afk":
+		if {core::players::%player's uuid%::afk::is} is true:
+			set the result to "&6&lAFK"
+		else:
+			set the result to ""
+	else if the identifier is "player_afk_no_fancy":
+		if {core::players::%player's uuid%::afk::is} is true:
+			set the result to "&6A"
+		else:
+			set the result to ""
+	# health
+	else if the identifier is "player_health":
+		set the result to "&f%player's health%&c❤"
+	else if the identifier is "player_afk_no_fancy":
+		set the result to "%player's health%"
+	# Combat
+	else if the identifier is "player_combat_is":
+		set the result to "%{core::players::%player's uuid%::combat::is} ? false%"
+	else if the identifier is "player_combat_is_admin":
+		if player does not have permission "antcore.combat.admin":
+			set the result to "false"
+		else:
+			set the result to "%{core::players::%player's uuid%::combat::is} ? false%"
+	else if the identifier is "player_combat_opponent":
+		set the result to "%{core::players::%player's uuid%::combat::lastTagged} ? "Unknown"%"
+	else if the identifier is "player_combat_opponent_health":
+		set the result to "&f%health of {core::players::%player's uuid%::combat::lastTagged} ? 0%&c❤"
+	else if the identifier is "player_combat_opponent_health_no_fancy":
+		set the result to "&f%health of {core::players::%player's uuid%::combat::lastTagged} ? 0%"
+	else if the identifier is "player_combat_left":
+		set the result to "%{core::players::%player's uuid%::combat::sec} ? 0%&cs"
+	
+	# Staff
+
+	else if the identifier is "player_staff_vanished":
+		set the result to "%{core::players::%player's uuid%::staff::vanished} ? false%"
+	else if the identifier is "player_staff_chat_enabled":
+		set the result to "%{core::players::%player's uuid%::staff::chat} ? false%"
+	else if the identifier is "player_staff_commandspy_enabled":
+		set the result to "%{core::players::%player's uuid%::staff::commandspy} ? false%"
+	else if the identifier is "player_staff_commandspy_block":
+#		set {_list} to "%{core::players::%player's uuid%::staff::commandspy::blocked::*}%"
+#		set {_list} to split " and " with ", " in {_list}
+		set {_commands} to ""
+#		set {_commands::*} to {_list} split by ", "
+		loop {core::players::%player's uuid%::staff::commandspy::blocked::*}:
+			if {_commands} is "":
+				set {_commands} to loop-value
+			else:
+				set {_commands} to join "%{_commands}%, %loop-value%"
+		set the result to {_commands}
+
+	# players online
+	else if the identifier is "server_players_online":
+		loop all players:
+			if {core::staff::vanished::*} does not contain loop-player:
+				add 1 to {_p}
+		set the result to "%{_p} ? 0%"
+	else if the identifier is "server_online_all":
+		set {_p} to size of players
+		set the result to "%{_p} ? 0%"
+	else if the identifier is "server_online_afk":
+		loop all players:
+			if {core::players::%loop-player's uuid%::afk::is} is true:
+				add 1 to {_p}
+		set the result to "%{_p} ? 0%"
+	else if the identifier is "server_online_afk_no_vanished":
+		loop all players:
+			if {core::players::%loop-player's uuid%::afk::is} is true:
+				if {core::players::%loop-player's uuid%::vanish::is} is not true:
+					add 1 to {_p}
+		set the result to "%{_p} ? 0%"
+	else if the identifier is "server_online_no_staff":
+		loop all players:
+			if player does not have permission "antcore.staff":
+				add 1 to {_p}
+		set the result to "%{_p} ? 0%"
+	else if the identifier is "server_online_staff":
+		loop all players:
+			if loop-player has permission "antcore.staff":
+				add 1 to {_p}
+		set the result to "%{_p} ? 0%"
+	else if the identifier is "server_online_staff_no_admin":
+		loop all players:
+			if loop-player has permission "antcore.staff":
+				if loop-player does not have permission "antcore.admin":
+					add 1 to {_p}
+		set the result to "%{_p} ? 0%"
+	else if the identifier is "server_online_admin":
+		loop all players:
+			if loop-player has permission "antcore.admin":
+				add 1 to {_p}
+		set the result to "%{_p} ? 0%"
+	# ip
+	else if the identifier is "server_ip":
+		set the result to "%{core::info::ip}%"
+	# discord
+	else if the identifier is "server_discord":
+		set the result to "%{core::info::discord}%"
+	# tps
+	else if the identifier is "server_tps":
+		set the result to "%first element of tps%"
+	# buycraft
+	else if the identifier is "server_buycraft_server_plan_goal":
+		set the result to "%{core::info::buycraft::server_plan::goal} ? 0%"
+	else if the identifier is "server_buycraft_server_plan_current":
+		set the result to "%{core::info::buycraft::server_plan::current} ? 0%"
+	else if the identifier is "server_buycraft_goal":
+		set the result to "%{core::info::buycraft::goal} ? 0%"
+	else if the identifier is "server_buycraft_current":
+		set the result to "%{core::info::buycraft::current} ? 0%"
+	
+	# joins
+	else if the identifier is "server_joins_total":
+		set the result to "%{core::info::joins::total} ? 0%"
+	else if the identifier is "server_joins_since_restart":
+		set the result to "%{core::info::joins::since_restart} ? 0%"
+	else if the identifier is "server_joins_since_season_start":
+		set the result to "%{core::info::joins::since_restart} ? 0%"
+	else if the identifier is "server_joins_average_first_playtime":
+		set the result to "&a%{core::info::playtime::averageFirstJoin} ? 0%&fs"	
+	# playtime
+
+	else if the identifier is "server_playtime_average":
+		set the result to "%{core::info::playtime::average} ? 0 %&fs"
+	else if the identifier is "server_playtime_average_next_update":
+		if {core::info::playtime::nextUpdate} is not set:
+			set the result to "&a0&fs"
+		else:
+			set {_next} to {core::info::playtime::nextUpdate}
+			set {_s} to 0
+			set {_m} to 0
+			while {_next} > 60:
+				remove 60 from {_next}
+				add 1 to {_m}
+			while {_m} > 60:
+				remove 60 from {_m}
+				add 1 to {_h}
+			set {_return} to "&a%{_h} ? 0%h&f&a%{_m} ? 0%&fm&a%{_next} ? 0%&fs"
+			set the result to "%{_return}%"
+	else if the identifier is "server_playtime_average_last_update":
+		if {core::info::playtime::lastUpdate} is not set:
+			set the result to "&a0&fs"
+		else:
+			set {_next} to {core::info::playtime::lastUpdate}
+			set {_s} to 0
+			set {_m} to 0
+			while {_next} > 60:
+				remove 60 from {_next}
+				add 1 to {_m}
+			while {_m} > 60:
+				remove 60 from {_m}
+				add 1 to {_h}
+			set {_return} to "&a%{_h} ? 0%h&f&a%{_m} ? 0%&fm&a%{_next} ? 0%&fs"
+			set the result to "%{_return}%"

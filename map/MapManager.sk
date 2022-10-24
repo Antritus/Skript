@@ -1,0 +1,185 @@
+function saveMap(name: string):
+	set {_loc} to location at 34, 57, 34 in world "void"
+	set {_loc2} to location at -34, 31, -34 in world "void"
+	set {_y} to 57
+	set {_now} to now
+	broadcast "&cLast time taken to save new map: %{core::mapSaver::lastTime}%"
+	wait 20 tick
+	broadcast "STARTING"
+	loop 27 times:
+		if {core::mapSaver::stop} is true:
+			delete {core::mapSaver::stop}
+			broadcast "&cCancelled map saving!"
+			stop
+		set {_loc} to location at 34, {_y}, 34 in world "void"
+		set {_loc2} to location at -34, {_y}, -34 in world "void"
+		loop blocks within {_loc} and {_loc2}:
+			if {core::mapSaver::stop} is true:
+				delete {core::mapSaver::stop}
+				broadcast "&cCancelled map saving!"
+				stop
+			if loop-value-2 contains "air":
+				continue
+			add location at loop-value-2 to {core::map::%{_name}%::locations::%-1 + rounded y-coordinate of loop-value-2%::*}
+			set {_item::*} to "%loop-value-2%" split by "'"
+			set {_block} to {_item::2}
+			set {core::map::%{_name}%::block::%loop-value-2's location%} to {_block} parsed as itemtype
+		wait 5 tick
+		remove 1 from {_y}
+	broadcast "&cSaved map in %difference between {_now} and now%&c!"
+	set {core::mapSaver::lastTime} to difference between {_now} and now
+function loadMap(name: string):
+	teleport all players to {spawn}
+	broadcast "&cMap is changing! Please wait!"
+	set {_y} to 57
+	set {core::mapLoader::true} to false
+	loop 27 times:
+		loop {core::map::%{_name}%::locations::%{_y}%::*}:
+			if {core::mapLoader::stop} is true:
+				delete {core::mapLoader::*}
+				broadcast "&cCancelled map loading!"
+				stop
+			set block at loop-value-2 to {core::map::%{_name}%::block::%loop-value-2%}
+			add 1 to {_c}
+			if {_c} is 500:
+				wait 5 tick
+				delete {_c}
+		if {_y} = 45:
+			set {core::mapLoader::mapUnlocked} to true
+		remove 1 from {_y}
+		if {core::mapLoader::stop} is true:
+			delete {core::mapLoader::*}
+			broadcast "&cCancelled map loading!"
+			stop
+	set {core::mapLoader::loading} to false
+	broadcast "&cMap has changed!"
+function randomGlassTop():
+	set {_loc} to location at 34, 92, 34 in world "void"
+	set {_loc2} to location at -34, 92, -34 in world "void"
+	loop blocks within {_loc} and {_loc2}:
+		if {core::mapGlassTop::stop} is true:
+			broadcast "&cCancelled random glass top set!"
+			delete {core::mapGlassTop::stop}
+			stop
+		set block at loop-value to any stained glass block
+		add 1 to {_c}
+		if {_c} is 50:
+			delete {_c}
+			wait 2 ticks
+function glassTop(blocks: itemtypes):
+	set {_loc} to location at 34, 92, 34 in world "void"
+	set {_loc2} to location at -34, 92, -34 in world "void"
+	loop blocks within {_loc} and {_loc2}:
+		if {core::mapGlassTop::stop} is true:
+			broadcast "&cCancelled glass top set!"
+			delete {core::mapGlassTop::stop}
+			stop
+		set block at loop-value to random element out of {_blocks::*}
+		add 1 to {_c}
+		if {_c} is 50:
+			delete {_c}
+			wait 2 ticks
+function glassTopClear():
+	set {_loc} to location at 34, 92, 34 in world "void"
+	set {_loc2} to location at -34, 92, -34 in world "void"
+	loop blocks within {_loc} and {_loc2}:
+		if {core::mapGlassTopClear::stop} is true:
+			broadcast "&cCancelled glass top clear!"
+			delete {core::mapGlassTopClear::stop}
+			stop
+		set block at loop-value to air
+		add 1 to {_c}
+		if {_c} is 50:
+			delete {_c}
+			wait 2 ticks
+function stopLoad():
+	set {core::mapLoader::stop} to true
+function stopSave():
+	set {core::mapSaver::stop} to true
+function stopGlassTop():
+	set {core::mapGlassTop::stop} to true
+function stopGlassTopClear():
+	set {core::mapGlassTopClear::stop} to true
+function generateRandomMap():
+	set {_map} to random element out of {core::maps::*}
+	loadMap({_map})
+function setGlassTopP():
+	set {_list::*} to "black_stained_glass,lime_stained_glass,cyan_stained_glass,purple_stained_glass" split by ","
+	loop {_list::*}:
+		set {_c} to loop-value
+		replace "_" with " " in {_c}
+		add {_c} parsed as itemtype to {_c::*}
+	glassTop({_c::*})
+command /mapmanager [<string>] [<string>]:
+	permission: antcore.mapmanager
+	trigger:
+		if arg 1 is "reload" or "rl":
+			player command "/sk reload %script%"
+			stop
+		if arg 1 is "saveMap":
+			if arg 2 is not set:
+				send "&cYou require an map name to save it!"
+				stop
+			saveMap(arg 2)
+			stop
+		if arg 1 is "saveMapStop":
+			stopSave()
+			stop
+		if arg 1 is "loadMap":
+			if arg 2 is not set:
+				send "&cYou require an map name to load it!"
+				stop
+			loadMap(arg 2)
+			stop
+		if arg 1 is "loadMapStop":
+			stopLoad()
+			stop
+		if arg 1 is "glassTop":
+			if arg 2 is not set:
+				glassTop(glass block)
+			else:
+				set {_blocks::*} to arg 2 split by ","
+				loop {_blocks::*}:
+					set {_loop-value} to loop-value
+					replace "_" with " " in {_loop-value}
+					if {_loop-value} parsed as itemtype is not set:
+						send "&cUnknown block %{_loop-value}%"
+						stop
+					if "%{_loop-value} parsed as itemtype%" does not contain "glass":
+						send "&cUnknown block %{_loop-value}%"
+						stop
+					add {_loop-value} parsed as itemtype to {_b::*}
+				if {_b::*} is not set:
+					send "&cUnknown block('s)!"
+					stop
+				else:
+					glassTop({_b::*})
+					stop
+		if arg 1 is "randomGlassTop":
+			randomGlassTop()
+			stop 
+		if arg 1 is "glassTopStop":
+			stopGlassTop()
+			stop
+		if arg 1 is "glassTopClear":
+			glassTopClear()
+			stop
+		if arg 1 is "glassTopClearStop":
+			stopGlassTopClear()
+			stop
+on tab complete of "/mapmanager":
+	set tab completions for position 1 to "reload", "saveMap", "saveMapStop", "loadMap", "loadMapStop", "glassTop", "randomGlassTop", "glassTopStop", "glassTopClear", "glassTopClearStop"
+	if tab arg-1 is "glassTop":
+#		set {_a::*} to "glass", "tinted glass", "white stained glass", "orange stained glass", "magenta stained glass", "light blue stained glass", "yellow stained glass", "lime stained glass", "pink stained glass", "gray stained glass", "light gray stained glass", "cyan stained glass", "purple stained glass", "blue stained glass", "brown stained glass", "green stained glass", "red stained glass", "black stained glass"
+		set {_a::*} to "glass", "tinted_glass", "white_stained_glass", "orange_stained_glass", "magenta_stained_glass", "light_blue_stained_glass", "yellow_stained_glass", "lime_stained_glass", "pink_stained_glass", "gray_stained_glass", "light_gray_stained_glass", "cyan_stained_glass", "purple_stained_glass", "blue_stained_glass", "brown_stained_glass", "green_stained_glass", "red_stained_glass", "black_stained_glass"
+#		set {_arg::*} to tab arg-2 split by ""
+		set {_comp} to tab arg 2
+		loop {_a::*}:
+			if {_comp} does not contain loop-value:
+				if getLast({_comp}) = ",":
+					add "%{_comp}%%loop-value%" to {_a2::*}
+				else:
+					add "%{_comp}%,%loop-value%" to {_a2::*}
+		if tab arg 2 is not set:
+			set {_a2::*} to {_a::*}
+		set tab completions for position 2 to {_a2::*}

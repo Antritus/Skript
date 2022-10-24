@@ -1,0 +1,16 @@
+command /mutechat:
+	permission: antcore.staff.mutechat
+	permission message: &cYou cannot use this command!
+	trigger:
+		set {_action} to "&cmuted"
+		if {core::staff::mutechat} is true:
+			set {core::staff::mutechat} to false
+			set {_action} to "&aunmuted"
+		else:
+			set {core::staff::mutechat} to true
+		broadcast "&7The chat has been %{_action}% &7by &f%player's prefix%%player%&7!"
+on chat:
+	if {core::staff::mutechat} is true:
+		if player does not have permission "antcore.staff.mutechat.bypass":
+			send "&7The chat has been muted!"
+			cancel event

@@ -1,0 +1,12 @@
+command /kick <player> [<string>]:
+	usage: &7/kick <player> [reason]
+	permission: antcore.staff.kick
+	permission message: &cYou cannot use this command!
+	trigger:
+		if arg 1 has permission "antcore.staff.kick.bypass":
+			send "&cYou cannot kick this player!"
+			stop
+		set {_reason} to arg 2
+		if {_reason} is not set:
+			set {_reason} to "Unknown Reason"
+		kick arg 1 due to {_reason}

@@ -1,0 +1,30 @@
+import:
+    org.bukkit.Bukkit
+    java.io.File
+    org.bukkit.configuration.file.FileConfiguration
+    org.bukkit.configuration.file.YamlConfiguration
+on load:
+    set {antcore::plugin::skript} to Bukkit.getServer().getPluginManager().getPlugin("Skript")
+    set {antcore::yaml::folder} to "%{antcore::plugin::skript}.getDataFolder()%%File.separator%yaml"
+effect create new y[a]ml file [with] name[d] %string%:
+    trigger:
+        set {_file} to new File("%{antcore::yaml::folder}%%File.separator%%expr-1%.yml")
+        broadcast {_file}
+        if {_file}.createNewFile() = false:
+            send "&8[&3Ant&bCore&8] &7File already exists! (&f%{_file}%&7)" to console
+            stop
+        add expr-1 to {antcore::yaml::all::*}
+        set {antcore::yaml::yaml::%expr-1%::file} to {_file}
+        set {antcore::yaml::yaml::%expr-1%::config} to YamlConfiguration.loadConfiguration({_file})
+effect set y[a]ml [key] %string% to [value] %object% [of] %string%:
+    trigger:
+        if {antcore::yaml::yaml::%expr-3%::config} is not set:
+            send "&8[&3Ant&bCore&8] &7Config file unknown! (&f%expr-3%&7)" to console
+            stop
+        {antcore::yaml::yaml::%expr-1%::config}.set(expr-1, expr-2)
+effect save y[a]ml [file] %string%:
+    trigger:
+        if {antcore::yaml::yaml::%expr-1%::config} is not set:
+            send "&8[&3Ant&bCore&8] &7Config file unknown! (&f%expr-1%&7)" to console
+            stop
+        {antcore::yaml::yaml::%expr-1%::config}.save("%{antcore::yaml::folder}%%File.separator%%expr-1%.yml")

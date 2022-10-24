@@ -1,0 +1,64 @@
+command /commandspy [<string>] [<string>]:
+	permission: antcore.staff.commandspy
+	permission message: &cYou do not have permissions to use this!
+	aliases: cspy
+	trigger:
+		if arg 1 is "block":
+			if arg 2 is not set:
+				send "&7Usage: /commandspy block (command) | No / is needed!"
+				stop 
+			if {commandspy::%player's uuid%::blocked::*} contains lowercase arg 2:
+				send "&7That command is already in the blocked list!"
+				stop
+			add lowercase arg 2 to {core::players::%player's uuid%::staff::commandspy::blocked::*}
+			stop
+		if arg 1 is "unblock":
+			if arg 2 is not set:
+				send "&7Usage: /commandspy unblock (command)"
+				stop 
+			if {core::players::%player's uuid%::staff::commandspy::blocked::*} does not contain lowercase arg 2:
+				send "&7That command is not in the blocked list!"
+				stop
+			remove lowercase arg 2 from {core::players::%player's uuid%::staff::commandspy::blocked::*}
+			stop
+		if arg 1 is "toggle":
+			if {commandspy::%player's uuid%::toggle} is true:
+				delete {commandspy::%player's uuid%::toggle}
+				send "&cToggled off command spy!"
+			else:
+				set {commandspy::%player's uuid%::toggle} to true
+				send "&cToggled off command spy!"
+			stop
+		if arg 1 is set:
+			send "&7/commandspy block (command)"
+			send "&7/commandspy block (command)"
+			send "&7/commandspy toggle"
+			send "&7/commandspy | toggles the commandspy"
+			stop
+		if {core::players::%player's uuid%::staff::commandspy} is true:
+			delete {core::players::%player's uuid%::staff::commandspy}
+			set {_action} to "&cDisabled"
+		else:
+			set {core::players::%player's uuid%::staff::commandspy} to true
+			set {_action} to "&aEnabled"
+		send "%{_action}% &7command spy!"
+
+on command:
+	loop all players:
+#	if loop-player does not have permission "antcore.staff.commandspy":
+#		continue
+		if {core::players::%loop-player's uuid%::staff::commandspy} is not set:
+			continue
+		if {core::players::%loop-player's uuid%::staff::commandspy} is true:
+			if {core::players::%loop-player's uuid%::staff::commandspy::blocked::*} does not contain lowercase command:
+				send "&6&lCSPY &7%player% &7used command: /%command%" to loop-player
+function commandSpyStatus():
+	loop all players:
+		broadcast "&cCSPY STATUS: %loop-player% | %{core::players::%loop-player's uuid%::staff::commandspy} %"
+on tab complete:
+	if event-string is "/commandspy" or "/cspy":
+		set tab completions for position 1 to "block", "unblock" and "toggle"
+		if (tab arg-1 is "unblock"):
+			set tab completions for position 2 to {core::players::%player's uuid%::staff::commandspy::blocked::*}
+		else:
+			set tab completions for position 2 to ""

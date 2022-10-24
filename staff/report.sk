@@ -1,0 +1,14 @@
+command /report [<player>] [<text>]:
+    trigger:
+        if arg 1 is not set:
+            send "&cYou need to select a player to report!"
+            stop 
+        if arg 2 is not set:
+            send "&cYou need to select a reason to report a player for!"
+            stop
+        if arg 1 has permission "antcore.staff.report.antireport":
+            send "&cYou cannot report this person!"
+            stop
+        loop all players:
+            if loop-player has permission "antcore.staff.report.receive":
+                send "&6&lReport | &f%player% &7has reported &f%arg 1% &7due to &f%arg 2%&7!" to loop-player

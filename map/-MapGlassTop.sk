@@ -1,0 +1,12 @@
+on step on any stained glass block:
+	set {_height} to y-coordinate of event-block
+	if {_height} != 92.5:
+		stop
+	wait 5 ticks
+	set block at event-block's location to air
+on step on glass block:
+	set {_height} to y-coordinate of event-block
+	if {_height} != 92.5:
+		stop
+	wait 5 ticks
+	set block at event-block's location to air
