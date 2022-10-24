@@ -1,0 +1,336 @@
+
+#
+#    Don't edit anything unless you know what you're doing!
+#                     Clan skript by ycu!
+#                    Modified by Antritus
+#				    Modification Version: 1.1
+#    This skript requires Skript Addon: skBee (for tab completions)
+#     https://www.spigotmc.org/resources/skbee-skript-addon.75839/
+# 
+#
+
+options:
+	ver: 1.2
+	mod: 1.1
+	clanprefix: &4&lCLANS &8|&r
+	helpprefix: &c
+
+
+command /clan [<text>] [<text>]:
+	aliases: clans, c
+	trigger:
+#clan skript info
+		if arg-1 isn't set:
+			send "" to player
+			send "{@clanprefix} &7Version {@ver}" to player
+			send "" to player
+			send "{@helpprefix}/clan [help] &8| &7Sends clan related commands." to player
+			send "{@helpprefix}/clan create <clan name> &8| &7Create a clan." to player
+			send "{@helpprefix}/clan info <clan name> &8| &7Create a clan." to player
+			send "{@helpprefix}/clan join <clan name> &8| &7Join a clan. &c(Invite required)" to player
+			send "{@helpprefix}/clan invite <player> &8| &7Invite a player to your clan." to player
+			send "{@helpprefix}/clan kick <player> &8| &7Kick a player from your clan." to player
+			send "{@helpprefix}/clan leave &8| &7Leave your clan." to player
+			send "{@helpprefix}/clan delete &8| &7Delete your clan." to player
+			# Mod Beg
+			send "{@helpprefix}/clan chat &8| &7Toggle chat." to player
+			send "{@helpprefix}/clan pvp &8| &7Toggle between allowing other members attacks." to player
+			# Mod End
+			send "{@helpprefix}/clan author &8| &7Clan skript developer." to player
+			send "" to player
+		if arg-1 is "help":
+			make player say "/clan"
+#create clan
+		if arg-1 is set:
+			if arg-1 isn't "create", "leave", "delete", "invite", "kick", "help", "join", "info", "author", "reload", "chat" or "pvp":
+				send "{@clanprefix} &cInvalid Argument! &7Type &f/clan help &7for help!"
+		if arg-1 is "create":
+			if arg-2 is set:
+				if {clan::%player's uuid%} isn't set:
+					if lowercase arg 2 is "names":
+						send "&cYou are not allowed to have this clan name!"
+						stop
+					if {clan::names::*} doesn't contain arg-2:
+						if length of arg-2 <= 10:
+							if arg-2 is alphanumeric:
+								if arg-2 isn't a number:
+									add arg-2 to {clan::names::*}
+									set {clan::%player's uuid%} to arg-2
+									set {clan::%arg-2%::owner} to player's uuid
+									# Modification begin
+									# Saving players in members is not good idea
+									# Using uuid will help when players change name
+									# And in the leave method its using UUID and not player
+									#add player to {clan::%arg-2%::members::*}
+									add player's uuid to {clan::%arg-2%::members::*}
+									# Modification end
+									broadcast "{@clanprefix} &c%player% &7has created a clan named &f%arg-2%&7!"
+								else if arg-2 is a number:
+									send "{@clanprefix} &cYou can't use numbers in clan names!"
+							else if arg-2 isn't alphanumeric:
+								send "{@clanprefix} &cYour clan name must be alphanumeric."
+						else if length of arg-2 >= 11:
+							send "{@clanprefix} &cPick a shorter clan name. &7(Max 10 characters)"
+					else if {clan::names::*} contains arg-2:
+						send "{@clanprefix} &cThis clan name is already taken!"
+				else if {clan::%player's uuid%} is set:
+					send "{@clanprefix} &cYou're already in a clan!"
+			else if arg-2 isn't set:
+				send "{@clanprefix} &cIncorrect Usage! &7/clan create <clan name>"
+#credits
+		if arg-1 is "author":
+			send formatted "{@clanprefix}&7&o<suggest command:! Josh##0001><tooltip:&7Clan skript by &fycu&7!%nl%&7Discord: &f! Josh##0001 &7(Click)>&7 Clan skript by &fycu&7! &7(hover)" to player
+			# Mod Begin
+			send formatted "{@clanprefix}&7&o<suggest command:Antweetus##5899><tooltip:&7This clan skript is modified by &fAntritus&7!%nl%&7Discord: &fAntweetus##5899 &7(Click)>&7 Modified edition of &fycu&7's clans! Modification by: &fAntritus&7! &7(hover)" to player
+			# Modification end
+#reload skript
+		if arg-1 is "reload":
+			# Modification begin
+			# Why check if only has "admin" when "skript.reload" is required to reload skripts
+			#if player has permission "skript.reload":
+			if player has permission "skript.reload":
+			# Modification end
+				make player say "/sk reload %script%"
+				send formatted "{@clanprefix}&7&o<suggest command:! Josh##0001><tooltip:&7Clan skript by &fycu&7!%nl%&7Discord: &f! Josh##0001 &7(Click)>&7 Clan skript by &fycu&7! &7(hover)" to player
+				send formatted "{@clanprefix}&7&o<suggest command:Antweetus##5899><tooltip:&7This clan skript is modified by &fAntritus&7!%nl%&7Discord: &fAntweetus##5899 &7(Click)>&7 Modified edition of &fycu&7's clans! Modification by: &fAntritus&7! &7(hover)" to player
+				# Modification end
+			else if player doesn't have permission "skript.reload":
+				send "{@clanprefix} &cYou don't have access to this command."
+#leave clan
+		if arg-1 is "leave":
+			if {clan::%player's uuid%} is set:
+				if {clan::%{clan::%player's uuid%}%::owner} is player's uuid:
+					send "&cYou can't leave this clan as you're the owner%nl%&cUse &7/clan delete&c instead!"
+				else if {clan::%{clan::%player's uuid%}%::owner} isn't player's uuid:
+					set {_player} to {clan::%player's uuid%}
+					# Modification begin
+					# What is this supposed to do?
+#					remove player's uuid from {clan::%player's uuid%}
+					# Mofiication begin
+					remove player's uuid from {clan::%{clan::%player's uuid%}%::members::*}
+					delete {clan::%player's uuid%}
+					send "{@clanprefix} &cYou have left your clan!"
+					loop {clan::%{_player}%::members::*}:
+						send "{@clanprefix} &f%player% &chas left your clan!" to loop-value
+			else if {clan::%player's uuid%} isn't set:
+				send "{@clanprefix} &cYou're not in a clan."
+		if arg-1 is "delete":
+			if {clan::%player's uuid%} is set:
+				if {clan::%{clan::%player's uuid%}%::owner} is player's uuid:
+					if {clan::%player's uuid%::deletecooldown} is set:
+						if difference between now and {clan::%player's uuid%::deletecooldown} < 15 seconds:
+							send "{@clanprefix} &cYou've already deleted a clan within the last 15 seconds." to player
+							stop
+					# Modification begin
+					# There is faster way to delete all variables and it is
+					# delete {clan::%{clan::%player's uuid%}%::*}
+					set {_c} to {clan::%player's uuid%}
+#					delete {clan::%{clan::%player's uuid%}%::invite::*}
+					loop {clan::%{clan::%player's uuid%}%::members::*}:
+						delete {clan::%loop-value%}
+#					delete {clan::%{clan::%player's uuid%}%::members::*}
+					remove {_c} from {clan::names::*}
+					delete {clan::%player's uuid%}
+					# This will remove nothing due to owner not being list
+#					remove player from {clan::%{clan::%player's uuid%}%::owner}
+#					delete {clan::%{clan::%player's uuid%}%::owner}
+					delete {clan::%{_c}%::*}
+					send "{@clanprefix} &cYour clan has been deleted!"
+					# This is due to destruction
+					# Due to server crash setting this as true
+					set {clan::%player's uuid%::deletecooldown} to 15 seconds from now
+#					set {clan::%player's uuid%::deletecooldown} to true
+					wait 15 seconds
+					delete {clan::%player's uuid%::deletecooldown}
+					send "{@clanprefix} &cYour clan deletion cooldown has expired!" to player
+				else if {clan::%{clan::%player's uuid%}%::owner} isn't player's uuid:
+					send "{@clanprefix} &cYou're not the clan owner!"
+			else if {clan::%player's uuid%} isn't set:
+				send "{@clanprefix} &cYou're not in a clan."
+#clan info
+		if arg-1 is "info":
+			# Modification begin
+			if arg-2 is set:
+				if {clan::names::*} contains arg-2:
+					sendClanInfo(player, arg 2)
+				else if {clan::names::*} doesn't contain arg-2:
+					send "&cUnknown Clan! &7/clan info <clan name>"
+			else if arg-2 isn't set:
+				if {clan::%player's uuid%} is not set:
+					send "&cIncorrect Usage! &7/clan info <clan name>"
+				else:
+					sendClanInfo(player, {clan::%player's uuid%})
+#clan kick
+		if arg-1 is "kick":
+			if {clan::%player's uuid%} is set:
+				if arg-2 is set:
+					if {clan::%{clan::%player's uuid%}%::members::*} contains arg-2 parsed as offline player's uuid:
+						if player is {clan::%{clan::%player's uuid%}%::owner} parsed as player:
+							set {_arg-2} to uuid of arg-2 parsed as offlineplayer
+							remove arg-2 from {clan::%{clan::%player's uuid%}%::members::*}
+							remove {_arg-2} from {clan::%{clan::%player's uuid%}%::members::*}
+							delete {clan::%{_arg-2} parsed as offline player's uuid%}
+							send "{@clanprefix} &cYou have been kicked from &f%{clan::%player's uuid%}%&c!" to arg-2 parsed as player
+							loop {clan::%{clan::%player's uuid%}%::members::*}:
+								send "{@clanprefix} &f%player% &chas kicked &f%arg-2%&c from your clan!" to loop-value parsed as offline player
+						else if player isn't {clan::%{clan::%player's uuid%}%::owner} parsed as player:
+							send "{@clanprefix} &cYou're not the owner of your clan."
+					else if {clan::%{clan::%player's uuid%}%::members::*} doesn't contain arg-2 parsed as offline player:
+						send "{@clanprefix} &cThat player isn't in your clan."
+				else if arg-2 isn't set:
+					send "{@clanprefix} &cInvalid Usage! &7/clan kick <player>" to player
+			else if {clan::%player's uuid%} isn't set:
+				send "{@clanprefix} &cYou're not in a clan. &7(/clan create)"
+#clan invite
+		if arg-1 is "invite":
+			if arg-2 is set:
+				if {clan::%player's uuid%} is set:
+					set {_arg-2} to arg-2 parsed as offline player
+					if arg-2 parsed as player is online:
+						set {_clan::members::*} to {clan::%{clan::%player's uuid%}%::members::*}
+						if {_clan::members::*} doesn't contain arg-2 parsed as offline player's uuid:
+							if difference between {clan::%{clan::%player's uuid%}%::invite::%{_arg-2}%.when} and now > 30 seconds:
+								delete {clan::%{clan::%player's uuid%}%::invite::%{_arg-2}%.when}
+								delete {clan::%{clan::%player's uuid%}%::invite::%{_arg-2}%}
+							if {clan::%{clan::%player's uuid%}%::invite::%{_arg-2}%} isn't set:
+								send "{@clanprefix} &cYou have invited &f%arg-2% &cto &f%{clan::%player's uuid%}%&c!" to player
+								add {clan::%player's uuid%} to {clan::%{_arg-2}'s uuid%::invites::*}
+								send "{@clanprefix} &cYou have been invited to &f%{clan::%player's uuid%}%&c!" to arg-2 parsed as player
+								send formatted "{@clanprefix} &7<run command:/clan join %{clan::%player's uuid%}%>Click here or type /clan join %{clan::%player's uuid%}% to join!" to arg-2 parsed as player
+								set {clan::%{clan::%player's uuid%}%::invite::%{_arg-2}%} to true
+								set {clan::%{clan::%player's uuid%}%::invite::%{_arg-2}%.when} to now
+								wait 10 seconds
+								# Modification begin 
+								# Fix clan invite expired even if joined clans
+								if {clan::%player's uuid%} is set:
+									stop
+								if {clan::%{clan::%player's uuid%}%::invite::%{_arg-2}%} is not true:
+									stop
+								# Modification end
+								delete {clan::%{clan::%player's uuid%}%::invite::%{_arg-2}%}
+								delete {clan::%{clan::%player's uuid%}%::invite::%{_arg-2}%.when}
+								send "{@clanprefix} &cYour clan invite from &f%{clan::%player's uuid%} ? "&4Deleted Clan"% &chas expired!" to arg-2 parsed as player
+								send "{@clanprefix} &7&oYou can ask &f&o%player% &7&ofor a new invite." to arg-2 parsed as player
+								remove {clan::%player's uuid%} from {clan::%{_arg-2}'s uuid%::invites::*}
+								send "{@clanprefix} &cYour invite sent to &f%arg-2%&c has expired!" to player
+							else if {clan::%{clan::%player's uuid%}%::invite::%{_arg-2}%} is set:
+								send "{@clanprefix} &cYou already sent an invite to &f%arg-2% &cwithin the last 30 seconds!"
+						else if {_clan::members::*} contains arg-2 parsed as offline player's uuid:
+							send "{@clanprefix} &cThat player is already in your clan!"
+					else if arg-2 parsed as player isn't online:
+						send "{@clanprefix} &cThat player isn't online."
+				else if {clan::%player's uuid%} isn't set:
+					send "{@clanprefix} &cYou're not in a clan. &7(/clan create)"
+			else if arg-2 isn't set:
+				send "{@clanprefix} &cInvalid Usage! &7/clan invite (player)"
+#clan join
+		if arg-1 is "join":
+			if arg-2 is set:
+				if {clan::names::*} contains arg-2:
+					loop {clan::%player's uuid%::invites::*}:
+						if arg-2 is loop-value:
+							set {_c} to true
+					if {_c} is set:
+						if {clan::%player's uuid%} isn't set:
+							set {clan::%player's uuid%} to arg-2
+							send "{@clanprefix} &f%player% &ajoined your clan!" to all players where [{clan::%input's uuid%} is arg-2]
+							# Modfication begin The fuck????
+							#add player's uuid to {clan::%arg-2%}
+							# Modification end
+							add player's uuid to {clan::%arg-2%::members::*}
+							send "{@clanprefix} &aYou joined clan &f&n%arg-2%&a!" to player
+						else if {clan::%player's uuid%} is set:
+							send "{@clanprefix} &cYou're already in a clan! &7(/clan leave, /clan delete)"
+					else if {_c} is not set:
+						send "{@clanprefix} &cYou haven't been invited to &f%arg-2%&c!"
+				else if {clan::names::*} doesn't contain arg-2:
+					send "{@clanprefix} &cThe clan ""&f%arg-2%&c"" doesn't exist!"
+			else if arg-2 isn't set:
+				send "{@clanprefix} &cInvalid Usage! &7/clan join (clan)"
+		# Modification begin
+		# Modification: Clan chat
+		# Why was it not in this?
+		if arg 1 is "chat":
+			if arg-2 is set:
+				send "{@clanprefix} &cInvalid Usage! &7/clan chat"
+			else:
+				if {players::%player's uuid%::clan::chat} is set:
+					delete {players::%player's uuid%::clan::chat}
+					send "{@clanprefix} &aYou untoggled clan chat&a!" to player
+				else:
+					set {players::%player's uuid%::clan::chat} to true
+					send "{@clanprefix} &aYou toggled clan chat&a!" to player
+		# Modification end
+		# Modification start
+		if arg 1 is "togglepvp" or "pvp":
+			if arg 2 is set:
+				send "{@clanprefix} &cInvalid Usage! &7/clan togglepvp"
+				stop
+			if {clan::%player's uuid%} is set:
+				if {players::%player's uuid%::clan::pvp} is true:
+					delete {players::%player's uuid%::clan::pvp}
+					send "{@clanprefix} &aYou can hurt now clan members with pvp&a!" to player
+				else:
+					set {players::%player's uuid%::clan::pvp} to true
+					send "{@clanprefix} &aYou can no longer hurt now clan members with pvp&a!" to player
+			else:
+				send "{@clanprefix} &cYou're not in a clan. &7(/clan create)"
+		# Modification end
+#other stuff
+
+on tab complete of "/clan", "/c" and "/clans":
+	set tab completions for position 1 to "help", "create", "info", "join", "invite", "kick", "leave", "author" and "delete", "pvp", "chat"
+	if tab arg-1 is "join" or "create":
+		set tab completions for position 2 to "clan-name"
+	else if tab arg-1 is "kick":
+		loop {clan::%{clan::%player's uuid%}%::members::*}:
+			set tab completions for position 2 to "%loop-value%" parsed as player
+	else if tab arg-1 is "invite":
+		set tab completions for position 2 to all players
+	else if tab arg-1 is "info":
+		set tab completions for position 2 to {clan::names::*} and "(clan-name)"
+on chat:
+	if {core::players::%player's uuid%::clan::chat} is true:
+		cancel event
+		loop {clan::%{clan::%player's uuid%}%::members::*}:
+			if loop-value parsed as offline player is online:
+				send "&8[&6%{clan::%player's uuid%}%&8] &f%player%&7: &f%message%" to loop-value parsed as offline player
+
+on damage of player:
+	if {clan::%attacker's uuid%} is {clan::%victim's uuid%}:
+		if {core::players::%victim's uuid%::clan::pvp} is not set:
+			set {core::players::%victim's uuid%::clan::pvp} to true
+		if {core::players::%attacker's uuid%::clan::pvp} is not set:
+			set {core::players::%attacker's uuid%::clan::pvp} to true
+		if {core::players::%victim's uuid%::clan::pvp} is false:
+			if {core::players::%attacker's uuid%::clan::pvp} is false:
+				stop
+		cancel event
+		send "{@clanprefix} &cYou can't attack &f%victim% &cas they're in your clan!" to attacker
+
+function sendClanInfo(p: player, clan: string):
+	set {_members::*} to {clan::%{_clan}%::members::*}
+	loop {_members::*}:
+		add loop-value parsed as offline player to {_memb::*}
+		if {clan::%{_clan}%::owner} = loop-value parsed as offline player's uuid:
+			continue 
+		if {_memb::*} does not contain loop-value parsed as offline player:
+			add "%loop-value parsed as offline player% &c✖&f" to {_clan::members::*}
+		else if loop-value parsed as offline player is not online:
+			add "%loop-value parsed as offline player% &c✖&f" to {_clan::members::*}
+		else:
+			add "%loop-value parsed as offline player% &a✔&f" to {_clan::members::*}
+#	remove {clan::%{_clan}%::owner} parsed as player from {_members::*}
+	set {_c} to "&f%{clan::%{_clan}%::owner} parsed as offline player% &a✔&f"
+	if {clan::%{_clan}%::owner} parsed as offline player is not online:
+		set {_c} to "&f%{clan::%{_clan}%::owner} parsed as offline player% &c✖&f"
+	send "" to {_p}
+	send "&4&lCLAN INFO" to {_p}
+	send "" to {_p}
+	send "  &cClan name&7: &f%{_clan}%" to {_p}
+	send "  &cClan owner: &f%{_c}%" to {_p}
+	send "  &cClan members &7(&f%size of {_members::*}%&7): &f%{_clan::members::*} ? "None"%" to {_p}
+	send "" to {_p}
+function deletePlayerClans():
+	delete {clan::*}
+	delete {clans::*}
