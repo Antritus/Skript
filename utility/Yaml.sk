@@ -1,3 +1,5 @@
+# This skript is useless without the usage of the yaml and there is no usage to it.
+
 import:
     org.bukkit.Bukkit
     java.io.File
