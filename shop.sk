@@ -1,6 +1,13 @@
 # Uses github.com/ACSkripts/com.gmail.antcoreservices/utility/messages.sk for messages!
 # Uses github.com/ACSkripts/com.gmail.antcoreservices/economy/economy-manager.sk for economy!
 # Uses github.com/ACSkripts/com.gmail.antcoreservices/utility/menu.sk for menus!
+# This script is no longer viable due to github repos being deleted.
+# This script used economy manager functions which can be just modified or removed from the script.
+# This script used menu.sk for creating menus,but the script has them build in to it.
+# Messages were stored in variables ex {messages::*} or {messages::Shop::error::sell::not-set::player} (to player if opped)
+# Sell functions should work, but it does not have a buy function.
+# Sell function should be able to check for custom items and not sell them. (Custom items = nbt:gged)
+# Message utility is used to send messages from loaded preset messages.
 # This is owned by Antritus, github.com/Antritus
 # Usage of this skript required you to give credit!
 on load:
