@@ -1,3 +1,5 @@
+# This skript changes the server branding in the f3 menu of players.
+
 import:
 	org.bukkit.Bukkit
 	ch.njol.skript.Skript
