@@ -1,5 +1,5 @@
 on load:
-	set {_v} to "1.0.1"
+	set {_v} to "1.1.0"
 	set {_g} to "AntCore - Antritus - 21.12 - 10/01/2022"
 	send formatted "<sgt:Antritus##8909><ttp:&7Click here to copy the discord of the author of this skript!>&8[&3A&bC&7Skripts&8] &7Loading &3Ant&bCore &7combat system. This skript is a protototype system and not ready! . &7Author: Antritus (Hower for info)<reset>" to players
 	send "[AntCore] Loading AntCore combat system! Author: Antritus!" to console
@@ -8,7 +8,7 @@ on damage of player:
 		stop
 	if attacker is victim:
 		stop
-	if attacker is end crystal:
+	if attacker is "end crystal" parsed as entitytype:
 		set {_attacker} to {core::end_crystal::uuid}
 		if {core::players::%victim's uuid%::combat::tag} is not set:
 			send "&cYou are in combat for 10 seconds!" to victim
@@ -110,7 +110,7 @@ on death of player:
 				delete metadata tag "lastAttacker" of victim
 				delete metadata tag "lastAttackerUUID" of victim
 				delete metadata tag "lastAttacked" of victim
-		if attacker is end crystal:
+		if attacker is "end crystal" parsed as entitytype:
 			set {_attacker} to {core::end_crystal::player}
 			set {_uuid} to {core::end_crystal::uuid}
 			if {_attacker} is not set:
@@ -134,6 +134,8 @@ on death of player:
 			set {core::players::%metadata tag "lastAttackerUUID" of victim%::stats::deathstreak} to 0
 
 on right click on respawn anchor:
+	if event is cancelled:
+		stop
 	if player's tool is glowstone:
 		if {core::respawn_anchors::*} does not contain location of targeted block:
 			add location of targeted block to {core::respawn_anchors::*}
@@ -180,9 +182,12 @@ on quit:
 		add 1 to {core::players::%player's uuid%::stats::deathstreak}
 		add 1 to {core::players::%player's uuid%::stats::combatLogs}
 on resurrect attempt:
-	if player's tool is not totem of undying:
-		if player's offhand tool is not totem of undying:
-			stop 
+	if event is cancelled:
+		stop
+	if player's tool is "totem of undying" parsed as itemtype:
+		stop
+	if player's offhand tool is "totem of undying" parsed as itemtype:
+		stop 
 	add 1 to {core::players::%player's uuid%::stats::totemPops}
 	if {core::players::%player's uuid%::combat::lastTaggedUUID} is set:
 		add 1 to {core::players::%{core::players::%player's uuid%::combat::lastTaggedUUID}%::stats::totemsPopped}
@@ -190,14 +195,27 @@ on join:
 	if {core::players::%player's uuid%::combat::logged} is true:
 		send "%nl%&4&lCombat Tag%nl%&cRemember quitting in combat will count as death!%nl%&cYou left when in combat with &f%{core::players::%player's uuid%::combat::lastTagged}%&c!%nl%"
 		delete {core::players::%player's uuid%::combat::*}
-every second:
-	loop {core::combat::tagged::*}:
-		remove 1 from {core::players::%loop-value%::combat::sec}
-		if {core::players::%loop-value%::combat::timer} <= now:
-#		if {core::players::%loop-value%::combat::sec} <= 0:
-			remove loop-value from {core::combat::tagged::*}
-			delete {core::players::%loop-value%::combat::*}
-			send "&cYou are no longer in combat!" to loop-value parsed as player
+	while player is online:
+		add 1 to {core::players::%player's uuid%::stats::playtime::totalSeconds}
+		add 1 to {core::players::%player's uuid%::stats::playtime::seconds}
+		if {core::players::%player's uuid%::stats::playtime::seconds} > 60:
+			add 1 to {core::players::%player's uuid%::stats::playtime::minutes}
+			remove 60 from {core::players::%player's uuid%::stats::playtime::seconds}
+		if {core::players::%player's uuid%::stats::playtime::minutes} > 60:
+			add 1 to {core::players::%player's uuid%::stats::playtime::hours}
+			remove 60 from {core::players::%player's uuid%::stats::playtime::minutes}
+		if {core::players::%player's uuid%::stats::playtime::hours} > 24:
+			add 1 to {core::players::%player's uuid%::stats::playtime::days}
+			remove 24 from {core::players::%player's uuid%::stats::playtime::hours}
+		wait 1 second
+		if {core::player::%player's uuid%::combat::is} is true:
+			remove 1 from {core::players::%player's uuid%::combat::sec}
+			if {core::players::%player's uuid%::combat::timer} <= now:
+	#		if {core::players::%player's uuid%::combat::sec} <= 0:
+				remove player's uuid from {core::combat::tagged::*}
+				delete {core::players::%player's uuid%::combat::*}
+				send "&cYou are no longer in combat!" to player
+		wait 1 second
 command /editstats [<player>] [<string>] [<integer>]:
 	aliases: editstatistics
 	permission: antcore.setstats
@@ -237,6 +255,11 @@ command /stats [<player>] [<string>]:
 		set {_kd} to {core::players::%{_p}'s uuid%::stats::kills} / {core::players::%{_p}'s uuid%::stats::deaths}
 		send "&7 K/D: &f%{_kd}%"
 		send "&7 Combat Logs: &f%{core::players::%{_p}'s uuid%::stats::combatLogs} ? 0%"
+		set {_d} to {core::players::%player's uuid%::stats::playtime::days}
+		set {_h} to {core::players::%player's uuid%::stats::playtime::hours}
+		set {_m} to {core::players::%player's uuid%::stats::playtime::minutes}
+		set {_s} to {core::players::%player's uuid%::stats::playtime::seconds}
+		send "&7 Playtime: &f%{_d}?0%d %{_h}?0%h %{_m}?0%m %{_s}?0%"
 
 on command:
 	if {core::players::%player's uuid%::combat::is} is set:
