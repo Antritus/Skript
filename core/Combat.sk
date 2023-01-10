@@ -251,9 +251,9 @@ command /stats [<player>] [<string>]:
 		send "&7 Combat Logs: &f%{core::players::%{_p}'s uuid%::stats::combatLogs} ? 0%"
 
 on command:
-	{core::players::%player's uuid%::combat::is} is set
-	set {_disabled_commands::*} to "spawn", "espawn"
-	loop {_disabled_commands:*}:
-		if "%lowercase command%" is "%lowercase loop-value%":
-			send "&cYou cannot execute this command while in combat!"
-			cancel event
+	if {core::players::%player's uuid%::combat::is} is set:
+		set {_disabled_commands::*} to "spawn", "espawn"
+		loop {_disabled_commands::*}:
+			if lowercase command is lowercase loop-value:
+				send "&cYou cannot execute this command while in combat!"
+				cancel event
