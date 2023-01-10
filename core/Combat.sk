@@ -1,14 +1,7 @@
-#!Author: Antritus
-#!Giving this skript to anybody without permissions is not suitable and will get you fucked
-#!I do not suggest stealing this.
-#!I wish this skript to be kept more private and not shared due to it taking a long time to develop to its current state.
-#! I do not think this skript is no where ready but its fine for now.
-#? What can I do if the skript breaks?
-#! You can ask the author of the skript for help
 on load:
-	set {_v} to "1.0.0"
-	set {_g} to "AntCore - Antritus - 21.12 - 16/10/2022"
-	send formatted "<sgt:Antritus#8909><ttp:&7Click here to copy the discord of the author of this skript!>&8[&3A&bC&7Skripts&8] &7Loading &3Ant&bCore &7combat system. This skript is a protototype system and not ready! . &7Author: Antritus (Hower for info)<reset>" to players
+	set {_v} to "1.0.1"
+	set {_g} to "AntCore - Antritus - 21.12 - 10/01/2022"
+	send formatted "<sgt:Antritus##8909><ttp:&7Click here to copy the discord of the author of this skript!>&8[&3A&bC&7Skripts&8] &7Loading &3Ant&bCore &7combat system. This skript is a protototype system and not ready! . &7Author: Antritus (Hower for info)<reset>" to players
 	send "[AntCore] Loading AntCore combat system! Author: Antritus!" to console
 on damage of player:
 	if event is cancelled:
@@ -31,7 +24,7 @@ on damage of player:
 		add 10 seconds to {core::players::%{_attacker}%::combat::timer}
 		set {core::players::%victim's uuid%::combat::lastTagged} to {_attacker}
 		set {core::players::%{_attacker}%::combat::lastTagged} to victim
-		set {core::players::%victim's uuid%::combat::lastTaggedUUID} to {_attacker}
+		set {core::players::%victim's uuid%::combat::lastTaggedUUID} to {_attacker}'s uuid
 		set {core::players::%{_attacker}%::combat::lastTaggedUUID} to victim's uuid
 		set {core::players::%victim's uuid%::combat::sec} to 10
 		set {core::players::%{_attacker}%::combat::sec} to 10
@@ -54,7 +47,7 @@ on damage of player:
 		add 10 seconds to {core::players::%{_attacker}%::combat::timer}
 		set {core::players::%victim's uuid%::combat::lastTagged} to {_attacker}
 		set {core::players::%{_attacker}%::combat::lastTagged} to victim
-		set {core::players::%victim's uuid%::combat::lastTaggedUUID} to {_attacker}
+		set {core::players::%victim's uuid%::combat::lastTaggedUUID} to {_attacker}'s uuid
 		set {core::players::%{_attacker}%::combat::lastTaggedUUID} to victim's uuid
 		set {core::players::%victim's uuid%::combat::sec} to 10
 		set {core::players::%{_attacker}%::combat::sec} to 10
@@ -146,11 +139,9 @@ on right click on respawn anchor:
 			add location of targeted block to {core::respawn_anchors::*}
 		add 1 to {core::respawn_anchor::%location of targeted block%}
 		if {core::respawn_anchor::%location of targeted block%} >= 5:
-			send "&cExploded!"
 			set {_exp} to true
 	else:
 		if {core::respawn_anchor::%location of targeted block%} >= 1:
-			send "&cExploded!"
 			set {_exp} to true
 	if {_exp} is true:
 		delete {core::respawn_anchor::%location of targeted block%}
@@ -207,11 +198,8 @@ every second:
 			remove loop-value from {core::combat::tagged::*}
 			delete {core::players::%loop-value%::combat::*}
 			send "&cYou are no longer in combat!" to loop-value parsed as player
-command /givecoin:
-	permission: antcore.givecoin
-	trigger:
-		give player 1 of sunflower of lure 1 named "&eCoin" with lore "&7Can be used at /spawn for items!" with all flags hidden
-command /setstat [<player>] [<string>] [<integer>]:
+command /editstats [<player>] [<string>] [<integer>]:
+	aliases: editstatistics
 	permission: antcore.setstats
 	trigger:
 		set {_p} to arg 1
@@ -254,6 +242,6 @@ on command:
 	if {core::players::%player's uuid%::combat::is} is set:
 		set {_disabled_commands::*} to "spawn", "espawn"
 		loop {_disabled_commands::*}:
-			if lowercase command is lowercase loop-value:
+			if "%lowercase command%" is "%lowercase loop-value%":
 				send "&cYou cannot execute this command while in combat!"
 				cancel event
