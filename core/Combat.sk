@@ -8,7 +8,7 @@
 on load:
 	set {_v} to "1.0.0"
 	set {_g} to "AntCore - Antritus - 21.12 - 16/10/2022"
-	send formatted "<sgt:Antweetus##5899><ttp:&7Click here to copy the discord of the author of this skript!>&8[&3A&bC&7Skripts&8] &7Loading &3Ant&bCore &7combat system. This skript is a protototype system and not ready! . &7Author: Antritus (Hower for info)<reset>" to players
+	send formatted "<sgt:Antritus#8909><ttp:&7Click here to copy the discord of the author of this skript!>&8[&3A&bC&7Skripts&8] &7Loading &3Ant&bCore &7combat system. This skript is a protototype system and not ready! . &7Author: Antritus (Hower for info)<reset>" to players
 	send "[AntCore] Loading AntCore combat system! Author: Antritus!" to console
 on damage of player:
 	if event is cancelled:
