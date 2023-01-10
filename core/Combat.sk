@@ -1,5 +1,6 @@
 on load:
-	set {_v} to "1.1.1"
+	set {_v} to "1.1.5"
+	# MeritBox = 1.1.2 = 1.1.5
 	set {_g} to "AntCore - Antritus - 21.12 - 10/01/2022"
 	send formatted "<sgt:Antritus##8909><ttp:&7Click here to copy the discord of the author of this skript!>&8[&3A&bC&7Skripts&8] &7Loading &3Ant&bCore &7combat system %{_v}%! . &7Author: Antritus (Hower for info)<reset>" to players
 	send "[AntCore] Loading AntCore combat system %{_v}%! Author: Antritus!" to console
@@ -92,16 +93,25 @@ on death of player:
 	remove victim's uuid from {core::combat::tagged::*}
 	set the death message to "&c%victim% &7died!"
 	if attacker is a player:
-		add 1 to {core::players::%attacker's uuid%::stats::kills}
-		add 1 to {core::players::%attacker's uuid%::stats::killstreak}
 		set {core::players::%attacker's uuid%::stats::deathstreak} to 0
 		if attacker's tool is not air:
 			if displayname of attacker's tool is set:
-				set the death message to "&c%victim% &7died to <##03fc35>%attacker% &8[&c%attacker's health*2%&8]&7 using [&f%attacker's tool's displayname%&7]!"
+				if projectile is set:
+					set the death message to "&c%victim% &7was shot by <##03fc35>%attacker% &8[&c%attacker's health*2%&8]&7 using [&f%attacker's tool's displayname%&7]!"
+				else:
+					set the death message to "&c%victim% &7died to <##03fc35>%attacker% &8[&c%attacker's health*2%&8]&7 using [&f%attacker's tool's displayname%&7]!"
+					add 1 to {core::players::%attacker's uuid%::stats::kills}
+					add 1 to {core::players::%attacker's uuid%::stats::killstreak}
+			else:
+				if projectile is set:
+					set the death message to "&c%victim% &7was shot by <##03fc35>%attacker% &8[&c%attacker's health*2%&8]&7!"
+				else:
+					set the death message to "&c%victim% &7died to <##03fc35>%attacker% &8[&c%attacker's health*2%&8]&7!"
+		else:
+			if projectile is set:
+				set the death message to "&c%victim% &7was shot by <##03fc35>%attacker% &8[&c%attacker's health*2%&8]&7 using &fair? magic?&7!"
 			else:
 				set the death message to "&c%victim% &7died to <##03fc35>%attacker% &8[&c%attacker's health*2%&8]&7!"
-		else:
-			set the death message to "&c%victim% &7died to <##03fc35>%attacker% &8[&c%attacker's health*2%&8]&7!"
 	else:
 		if metadata tag "lastAttacked" of victim is set:
 			if difference between now and metadata tag "lastAttacked" of victim > 5 ticks:
@@ -118,8 +128,8 @@ on death of player:
 				stop
 			delete {core::end_crystal::player}
 			delete {core::end_crystal::uuid}
-			add 1 to {core::players::%{_uuid}%::stats::kills}
-			add 1 to {core::players::%{_uuid}%::stats::killstreak}
+			add 1 to {core::players::%{_uuid}%::stats::kills::crystal}
+			add 1 to {core::players::%{_uuid}%::stats::killstreak::crystal}
 			set {core::players::%{_uuid}%::stats::deathstreak} to 0
 			set the death message to "&c%victim% &7died to <##03fc35>%{_attacker}% &7using &fEnd Crystal!"
 		if metadata tag "anchorAttacker" of victim is set:
@@ -129,8 +139,8 @@ on death of player:
 			delete metadata tag "anchorAttacker" of victim
 			delete metadata tag "anchorAttackerLoc" of victim
 			delete metadata tag "lastAttacker" of victim
-			add 1 to {core::players::%metadata tag "lastAttackerUUID" of victim%::stats::kills}
-			add 1 to {core::players::%metadata tag "lastAttackerUUID" of victim%::stats::killstreak}
+			add 1 to {core::players::%metadata tag "lastAttackerUUID" of victim%::stats::kills::anchor}
+			add 1 to {core::players::%metadata tag "lastAttackerUUID" of victim%::stats::killstreak::anchor}
 			set {core::players::%metadata tag "lastAttackerUUID" of victim%::stats::deathstreak} to 0
 
 on right click on respawn anchor:
@@ -169,6 +179,7 @@ on damage of end crystal:
 	set {core::end_crystal::player} to attacker
 	set {core::end_crystal::uuid} to attacker's uuid
 on quit:
+	add 1 to {core::players::%player's uuid%::stats::quits}
 	if {core::players::%player's uuid%::combat::tagged} is set:
 		broadcast "%nl%&4&lCombat Tag%nl%&cRemember quitting in combat will count as death!%nl%&f%player% &cleft while in combat!%nl%"
 		set {_o} to {core::players::%player's uuid%::combat::lastTagged}
@@ -191,7 +202,10 @@ on resurrect attempt:
 	add 1 to {core::players::%player's uuid%::stats::totemPops}
 	if {core::players::%player's uuid%::combat::lastTaggedUUID} is set:
 		add 1 to {core::players::%{core::players::%player's uuid%::combat::lastTaggedUUID}%::stats::totemsPopped}
+on first join:
+	set {core::players::%player's uuid%::stats::firstJoin} to "%now%"
 on join:
+	add 1 to {core::players::%player's uuid%::stats::joins}
 	if {core::players::%player's uuid%::combat::logged} is true:
 		send "%nl%&4&lCombat Tag%nl%&cRemember quitting in combat will count as death!%nl%&cYou left when in combat with &f%{core::players::%player's uuid%::combat::lastTagged}%&c!%nl%"
 		delete {core::players::%player's uuid%::combat::*}
@@ -211,7 +225,6 @@ on join:
 		if {core::player::%player's uuid%::combat::is} is true:
 			remove 1 from {core::players::%player's uuid%::combat::sec}
 			if {core::players::%player's uuid%::combat::timer} <= now:
-	#		if {core::players::%player's uuid%::combat::sec} <= 0:
 				remove player's uuid from {core::combat::tagged::*}
 				delete {core::players::%player's uuid%::combat::*}
 				send "&cYou are no longer in combat!" to player
@@ -249,6 +262,10 @@ command /stats [<player>] [<string>]:
 		send "&aStatistics of &f%{_p}%"
 		send "&7 Kills: &f%{core::players::%{_p}'s uuid%::stats::kills} ? 0%"
 		send "&7 Killstreak: &f%{core::players::%{_p}'s uuid%::stats::killstreak} ? 0%"
+		send "&7 Kills (Anchor): &f%{core::players::%{_p}'s uuid%::stats::kills::anchor} ? 0%"
+		send "&7 Killstreak (Anchor): &f%{core::players::%{_p}'s uuid%::stats::killstreak::anchor} ? 0%"
+		send "&7 Kills (Crystal): &f%{core::players::%{_p}'s uuid%::stats::kills::crystal} ? 0%"
+		send "&7 Killstreak (Crystal): &f%{core::players::%{_p}'s uuid%::stats::killstreak::crystal} ? 0%"
 		send "&7 Player Totem Activated: &f%{core::players::%{_p}'s uuid%::stats::totemsPopped} ? 0%"
 		send "&7 Totems Activated: &f%{core::players::%{_p}'s uuid%::stats::totemPops} ? 0%"
 		send "&7 Deaths: &f%{core::players::%{_p}'s uuid%::stats::deaths} ? 0%"
@@ -259,7 +276,18 @@ command /stats [<player>] [<string>]:
 		set {_h} to {core::players::%player's uuid%::stats::playtime::hours}
 		set {_m} to {core::players::%player's uuid%::stats::playtime::minutes}
 		set {_s} to {core::players::%player's uuid%::stats::playtime::seconds}
-		send "&7 Playtime: &f%{_d} ? 0%d %{_h} ? 0%h %{_m} ? 0 %m %{_s} ? 0%"
+		send "&7 Playtime: &f%{_d} ? 0%d %{_h} ? 0%h %{_m} ? 0 %m %{_s} ? 0%s"
+command /playtime [<player>] [<string>]:
+	trigger:
+		set {_p} to player
+		if arg 1 is set:
+			set {_p} to arg 1
+		set {_d} to {core::players::%{_p}'s uuid%::stats::playtime::days}
+		set {_h} to {core::players::%{_p}'s uuid%::stats::playtime::hours}
+		set {_m} to {core::players::%{_p}'s uuid%::stats::playtime::minutes}
+		set {_s} to {core::players::%{_p}'s uuid%::stats::playtime::seconds}
+		send "&7 Playtime: &f%{_d} ? 0%d %{_h} ? 0%h %{_m} ? 0 %m %{_s} ? 0%s"
+		send "&7 Total Joins: %{core::players::%{_p}'s uuid%::stats::joins} ? 0%"
 
 on command:
 	if {core::players::%player's uuid%::combat::is} is set:
