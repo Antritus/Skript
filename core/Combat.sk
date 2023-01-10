@@ -259,7 +259,7 @@ command /stats [<player>] [<string>]:
 		set {_h} to {core::players::%player's uuid%::stats::playtime::hours}
 		set {_m} to {core::players::%player's uuid%::stats::playtime::minutes}
 		set {_s} to {core::players::%player's uuid%::stats::playtime::seconds}
-		send "&7 Playtime: &f%{_d} ? 0%d %{_h} ? 0%h %{_m}? 0 %m %{_s} ? 0%"
+		send "&7 Playtime: &f%{_d} ? 0%d %{_h} ? 0%h %{_m} ? 0 %m %{_s} ? 0%"
 
 on command:
 	if {core::players::%player's uuid%::combat::is} is set:
