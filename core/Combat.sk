@@ -243,13 +243,12 @@ on join:
 		if {core::players::%player's uuid%::stats::playtime::hours} > 24:
 			add 1 to {core::players::%player's uuid%::stats::playtime::days}
 			remove 24 from {core::players::%player's uuid%::stats::playtime::hours}
-		wait 1 second
-		if {core::player::%player's uuid%::combat::is} is true:
-			remove 1 from {core::players::%player's uuid%::combat::sec}
-			if {core::players::%player's uuid%::combat::timer} <= now:
-				remove player's uuid from {core::combat::tagged::*}
-				delete {core::players::%player's uuid%::combat::*}
-				send "&cYou are no longer in combat!" to player
+		remove 1 from {core::players::%player's uuid%::combat::sec}
+		if {core::players::%player's uuid%::combat::timer} <= now:
+			remove player's uuid from {core::combat::tagged::*}
+			delete {core::players::%player's uuid%::combat::is}
+			delete {core::players::%player's uuid%::combat::*}
+			send "&cYou are no longer in combat!" to player
 		wait 1 second
 command /editstats [<player>] [<string>] [<integer>]:
 	aliases: editstatistics
