@@ -6,9 +6,9 @@
 on load:
 	set {_v} to "1.1.6"
 	if {core::combat::lastVersion} is not set:
-		set {core::combat::lastVersion} to "1.1.5|None"
-		if {core::respawn_anchors::*} is set:
-			set {core::combat::lastVersion} to "1.5.5"
+//		set {core::combat::lastVersion} to "1.1.5|None"
+//		if {core::respawn_anchors::*} is set:
+//			set {core::combat::lastVersion} to "1.5.5"
 		set {core::combat::lastVersionJoin} to "1.5.5"
 	set {core::combat::lastVersion} to {_v}
 	set {_g} to "AntCore - Antritus - 21.12 - 10/01/2022"
