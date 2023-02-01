@@ -17,7 +17,3 @@ on respawn:
 on death:
     wait 1 tick
     force victim to respawn
-on world change:
-    world of player is not "void"
-    if player is not op:
-        teleport player to {core::spawn}
