@@ -4,9 +4,6 @@ import:
 	org.bukkit.Bukkit
 	ch.njol.skript.Skript
 	java.nio.charset.StandardCharsets
-effect disable minehut cosmetics:
-    parse:
-        Bukkit.getServer().getPluginManager().getPlugin()
 effect (send|show) [server] brand %string% (to|for) %players%:
 	parse:
 		Bukkit.getMessenger().registerOutgoingPluginChannel(Skript.getInstance(), "minecraft:brand")
