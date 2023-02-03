@@ -1,17 +1,21 @@
-# Makes sign guis possible by spawning a sign at 255 and opening the sign to player.
-# Editing the lines to fit the context and allowing to use on sign change event to check the lines
-# "metadata tag "signChange" of player" is used to save current code of sign
-# Author: antritus
-# Uses: skbee, skript
-# usage:
-# openSignGUI(player, code, line1, line2, line3, line4)
-# use event "on sign change with priority highest:" so you are able to get the lines.
-
 function openSignGUI(p: player, code: string, l1: string, l2: string, l3: string, l4: string):
 	set {signGUI::%{_p}%} to {_p}'s location
 	set y-coordinate of {signGUI::%{_p}%} to 255
 	set {signGUIOld::%{_p}%} to block at {signGUIOld::%{_p}%}
 	set block at {signGUI::%{_p}%} to sign
+	wait 1 tick
+	set line 1 of block at {signGUI::%{_p}%} to {_l1}
+	set line 2 of block at {signGUI::%{_p}%} to {_l2}
+	set line 3 of block at {signGUI::%{_p}%} to {_l3}
+	set line 4 of block at {signGUI::%{_p}%} to {_l4}
+	set metadata tag "signChange" of {_p} to {_code}
+	wait 1 tick
+	open sign gui of block at {signGUI::%{_p}%} to {_p}
+function openOakSignGUI(p: player, code: string, l1: string, l2: string, l3: string, l4: string):
+	set {signGUI::%{_p}%} to {_p}'s location
+	set y-coordinate of {signGUI::%{_p}%} to 255
+	set {signGUIOld::%{_p}%} to block at {signGUIOld::%{_p}%}
+	set block at {signGUI::%{_p}%} to oak sign
 	wait 1 tick
 	set line 1 of block at {signGUI::%{_p}%} to {_l1}
 	set line 2 of block at {signGUI::%{_p}%} to {_l2}
@@ -64,4 +68,4 @@ on sign change with priority highest:
 			send "&cTested!"
 command /example_signgui:
 	trigger:
-		openSignGUI(player, "ah-sell-price", "", "^^^^^^^^^^^^^^^^", "Set price to sell,", "this item for")
+		openOakSignGUI(player, "ah-sell-price", "", "^^^^^^^^^^^^^^^^", "Set price to sell,", "this item for")
